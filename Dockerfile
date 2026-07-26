@@ -38,4 +38,4 @@ RUN touch /var/www/database/database.sqlite \
 
 EXPOSE 80
 
-CMD ["sh", "-c", "chown www-data:www-data /var/www/database/database.sqlite && php artisan migrate --force && php artisan db:seed --class=AdminUserSeeder --force && service nginx start && php-fpm"]
+CMD ["sh", "-c", "chown www-data:www-data /var/www/database/database.sqlite && php artisan config:clear && php artisan migrate --force && php artisan db:seed --class=AdminUserSeeder --force && service nginx start && php-fpm"]
