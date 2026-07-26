@@ -31,10 +31,11 @@ RUN npm install && npm run build
 # Nginx config (proxies to PHP-FPM on localhost:9000)
 COPY nginx.render.conf /etc/nginx/sites-available/default
 
-# Permissions
-RUN chown -R www-data:www-data /var/www \
-    && chmod -R 755 /var/www/storage /var/www/bootstrap/cache
+# Create SQLite database with correct ownership
+RUN touch /var/www/database/database.sqlite \
+    && chown -R www-data:www-data /var/www \
+    && chmod -R 775 /var/www/storage /var/www/bootstrap/cache /var/www/database/database.sqlite
 
 EXPOSE 80
 
-CMD ["sh", "-c", "php artisan migrate --force && service nginx start && php-fpm"]
+CMD ["sh", "-c", "chown www-data:www-data /var/www/database/database.sqlite && php artisan migrate --force && service nginx start && php-fpm"]
