@@ -15,12 +15,15 @@ class Product extends Model
         'image_path',
         'is_active',
         'stock_quantity',
+        'badge',
+        'units_per_package',
     ];
 
     protected $casts = [
         'price' => 'decimal:2',
         'is_active' => 'boolean',
         'stock_quantity' => 'integer',
+        'units_per_package' => 'integer',
     ];
 
     public function category(): BelongsTo

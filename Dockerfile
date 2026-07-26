@@ -1,8 +1,14 @@
 FROM php:8.4-fpm
 
-# System deps
+# Install Node.js 20
+RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
+    apt-get install -y nodejs && \
+    rm -rf /var/lib/apt/lists/*
+
+# Install Nginx + system deps
 RUN apt-get update && apt-get install -y \
-    git curl zip unzip libpng-dev libjpeg-dev libfreetype6-dev \
+    nginx git curl zip unzip \
+    libpng-dev libjpeg-dev libfreetype6-dev \
     libonig-dev libxml2-dev libsqlite3-dev \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install pdo_sqlite mbstring exif pcntl bcmath gd \
@@ -16,12 +22,19 @@ WORKDIR /var/www
 
 COPY . .
 
+# Install PHP deps
+RUN composer install --no-dev --optimize-autoloader --no-interaction
+
+# Install JS deps and build assets
+RUN npm install && npm run build
+
+# Nginx config (proxies to PHP-FPM on localhost:9000)
+COPY nginx.render.conf /etc/nginx/sites-available/default
+
+# Permissions
 RUN chown -R www-data:www-data /var/www \
-    && chmod -R 755 /var/www/storage /var/www/bootstrap/cache 2>/dev/null || true
+    && chmod -R 755 /var/www/storage /var/www/bootstrap/cache
 
-USER www-data
+EXPOSE 80
 
-RUN composer install --no-dev --optimize-autoloader --no-interaction 2>/dev/null || true
-
-EXPOSE 9000
-CMD ["php-fpm"]
+CMD ["sh", "-c", "service nginx start && php-fpm"]

@@ -90,6 +90,7 @@ function onCheckoutComplete() {
                 v-if="item.image_path"
                 :src="item.image_path"
                 :alt="item.name"
+                loading="lazy"
                 class="w-full h-full object-cover"
               />
               <div v-else class="w-full h-full flex items-center justify-center">

@@ -1,19 +1,35 @@
 <script setup>
-import { ref, watch } from 'vue'
+import { ref } from 'vue'
 import { Link, router } from '@inertiajs/vue3'
 import AppLayout from '@/Layouts/AppLayout.vue'
+import Swal from 'sweetalert2'
 
 const props = defineProps({
   products: Array,
   categories: Array,
 })
 
-const editing = ref(null)
+const modalMode = ref(null)
+const editingProduct = ref(null)
 const form = ref({ name: '', description: '', price: '', category_id: '', stock_quantity: 0 })
 const imagePreview = ref(null)
 const imageFile = ref(null)
 const saving = ref(false)
-const confirmDelete = ref(false)
+
+const showModal = ref(false)
+
+const Toast = Swal.mixin({
+  toast: true,
+  position: 'top-end',
+  showConfirmButton: false,
+  timer: 2500,
+  timerProgressBar: true,
+  customClass: { popup: 'swal2-font' },
+})
+
+function logout() {
+  router.post(route('logout'))
+}
 
 function formatPrice(value) {
   return new Intl.NumberFormat('es-AR', {
@@ -23,23 +39,41 @@ function formatPrice(value) {
   }).format(value)
 }
 
+function resetForm() {
+  form.value = { name: '', description: '', price: '', category_id: '', stock_quantity: 0, badge: '', units_per_package: '' }
+  imagePreview.value = null
+  imageFile.value = null
+  saving.value = false
+}
+
+function openCreate() {
+  resetForm()
+  modalMode.value = 'create'
+  editingProduct.value = null
+  showModal.value = true
+}
+
 function openEdit(product) {
-  editing.value = product
+  resetForm()
+  modalMode.value = 'edit'
+  editingProduct.value = product
   form.value = {
     name: product.name,
     description: product.description || '',
     price: product.price,
     category_id: product.category_id || '',
     stock_quantity: product.stock_quantity,
+    badge: product.badge || '',
+    units_per_package: product.units_per_package || '',
   }
-  imagePreview.value = product.image_path ? '/img/' + product.image_path : null
-  imageFile.value = null
-  confirmDelete.value = false
+  imagePreview.value = product.image_path || null
+  showModal.value = true
 }
 
 function closeModal() {
-  editing.value = null
-  confirmDelete.value = false
+  showModal.value = false
+  modalMode.value = null
+  editingProduct.value = null
 }
 
 function onImageChange(e) {
@@ -57,24 +91,52 @@ function save() {
   data.append('price', form.value.price)
   data.append('category_id', form.value.category_id || '')
   data.append('stock_quantity', form.value.stock_quantity)
-  data.append('_method', 'PUT')
+  data.append('badge', form.value.badge)
+  data.append('units_per_package', form.value.units_per_package)
   if (imageFile.value) {
     data.append('image', imageFile.value)
   }
 
-  router.post(`/admin/productos/${editing.value.id}`, data, {
+  const isEdit = modalMode.value === 'edit'
+  if (isEdit) {
+    data.append('_method', 'PUT')
+  }
+
+  router.post(isEdit ? `/admin/productos/${editingProduct.value.id}` : '/admin/productos', data, {
     onFinish: () => {
       saving.value = false
       closeModal()
+      Toast.fire({
+        icon: 'success',
+        title: isEdit ? 'Producto actualizado' : 'Producto creado',
+      })
     },
     preserveScroll: true,
   })
 }
 
-function destroy() {
-  router.delete(`/admin/productos/${editing.value.id}`, {
+async function destroy() {
+  const result = await Swal.fire({
+    title: '¿Eliminar producto?',
+    html: `Se eliminará <strong>${editingProduct.value?.name}</strong> permanentemente.`,
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#dc2626',
+    cancelButtonColor: '#78350F',
+    confirmButtonText: 'Sí, eliminar',
+    cancelButtonText: 'Cancelar',
+    customClass: { popup: 'swal2-font' },
+  })
+
+  if (!result.isConfirmed) return
+
+  router.delete(`/admin/productos/${editingProduct.value.id}`, {
     onFinish: () => {
       closeModal()
+      Toast.fire({
+        icon: 'success',
+        title: 'Producto eliminado',
+      })
     },
     preserveScroll: true,
   })
@@ -85,21 +147,30 @@ function destroy() {
   <AppLayout>
     <!-- Header -->
     <div class="sticky top-0 z-40 bg-cream/95 backdrop-blur-sm border-b border-primary/10">
-      <div class="flex items-center justify-between h-14 px-4 sm:px-6 max-w-5xl mx-auto">
-        <div class="flex items-center gap-3">
-          <Link href="/" class="text-secondary/50 hover:text-secondary transition-colors">
-            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-              <polyline points="15 18 9 12 15 6" />
-            </svg>
-          </Link>
-          <h1 class="font-display font-bold text-lg text-secondary">Panel de Lily</h1>
-        </div>
+      <div class="flex items-center justify-between h-16 px-4 sm:px-6 max-w-5xl mx-auto">
         <Link
-          href="/"
-          class="text-xs text-secondary/40 hover:text-secondary/60 transition-colors"
+          href="/admin/categorias"
+          class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-primary/15 text-primary-dark hover:bg-primary/25 transition-all"
         >
-          Ver tienda
+          Categorías
         </Link>
+        <Link href="/" class="shrink-0">
+          <img src="/img/logolily.png" alt="Coxinhas da Lily" class="h-12 w-auto" />
+        </Link>
+        <div class="flex items-center gap-2">
+          <Link
+            href="/"
+            class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-secondary/10 text-secondary/70 hover:bg-secondary/20 transition-all"
+          >
+            Ver tienda
+          </Link>
+          <button
+            @click="logout"
+            class="px-3 py-1.5 rounded-lg text-xs font-semibold text-red-400 hover:bg-red-50 transition-all"
+          >
+            Salir
+          </button>
+        </div>
       </div>
     </div>
 
@@ -122,8 +193,9 @@ function destroy() {
             <div class="shrink-0 w-16 h-16 sm:w-20 sm:h-20 rounded-xl overflow-hidden bg-cream">
               <img
                 v-if="product.image_path"
-                :src="'/img/' + product.image_path"
+                :src="product.image_path"
                 :alt="product.name"
+                loading="lazy"
                 class="w-full h-full object-cover"
               />
               <div v-else class="w-full h-full flex items-center justify-center">
@@ -218,6 +290,7 @@ function destroy() {
     <!-- Boton flotante Agregar -->
     <div class="fixed bottom-20 lg:bottom-6 right-4 sm:right-6 z-40">
       <button
+        @click="openCreate"
         class="flex items-center gap-2 py-3.5 px-5 rounded-2xl bg-primary text-secondary font-display font-bold text-sm
                shadow-lg shadow-primary/30 hover:scale-105 active:scale-[0.97] transition-all duration-300"
       >
@@ -238,7 +311,7 @@ function destroy() {
         leave-to-class="opacity-0"
       >
         <div
-          v-if="editing"
+          v-if="showModal"
           class="fixed inset-0 z-[9999] bg-black/50 backdrop-blur-sm flex items-end sm:items-center justify-center"
           @click.self="closeModal"
         >
@@ -248,7 +321,7 @@ function destroy() {
           >
             <!-- Header modal -->
             <div class="sticky top-0 bg-cream/95 backdrop-blur-sm border-b border-primary/10 px-5 py-4 flex items-center justify-between rounded-t-3xl z-10">
-              <h2 class="font-display font-bold text-base text-secondary">Editar producto</h2>
+              <h2 class="font-display font-bold text-base text-secondary">{{ modalMode === 'create' ? 'Nuevo producto' : 'Editar producto' }}</h2>
               <button
                 @click="closeModal"
                 class="w-8 h-8 rounded-full bg-secondary/5 flex items-center justify-center text-secondary/50
@@ -286,7 +359,7 @@ function destroy() {
                            text-xs font-medium text-secondary/40 hover:border-primary/40 hover:text-secondary/60
                            cursor-pointer transition-colors"
                   >
-                    Cambiar foto
+                    {{ modalMode === 'create' ? 'Elegir foto' : 'Cambiar foto' }}
                     <input type="file" accept="image/*" class="hidden" @change="onImageChange" />
                   </label>
                 </div>
@@ -369,6 +442,33 @@ function destroy() {
                 </select>
               </div>
 
+              <!-- Badge + Unidades -->
+              <div class="grid grid-cols-2 gap-3">
+                <div>
+                  <label class="block text-xs font-semibold text-secondary/60 mb-1.5">Badge</label>
+                  <input
+                    v-model="form.badge"
+                    type="text"
+                    class="w-full px-4 py-2.5 rounded-xl bg-white border border-primary/10 text-sm text-secondary
+                           placeholder:text-secondary/30 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/30
+                           transition-all"
+                    placeholder="Ej: Apto Freezer"
+                  />
+                </div>
+                <div>
+                  <label class="block text-xs font-semibold text-secondary/60 mb-1.5">Unidades/bolsa</label>
+                  <input
+                    v-model="form.units_per_package"
+                    type="number"
+                    min="1"
+                    class="w-full px-4 py-2.5 rounded-xl bg-white border border-primary/10 text-sm text-secondary
+                           placeholder:text-secondary/30 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/30
+                           transition-all tabular-nums"
+                    placeholder="Ej: 25"
+                  />
+                </div>
+              </div>
+
               <!-- Botones -->
               <div class="flex gap-3 pt-2">
                 <button
@@ -378,7 +478,7 @@ function destroy() {
                          shadow-md shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all
                          disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {{ saving ? 'Guardando...' : 'Guardar cambios' }}
+                  {{ saving ? 'Guardando...' : (modalMode === 'create' ? 'Crear producto' : 'Guardar cambios') }}
                 </button>
                 <button
                   type="button"
@@ -390,42 +490,11 @@ function destroy() {
                 </button>
               </div>
 
-              <!-- Eliminar -->
-              <div class="pt-1">
-                <Transition
-                  enter-active-class="transition-all duration-200"
-                  leave-active-class="transition-all duration-200"
-                  enter-from-class="opacity-0 -translate-y-1"
-                  leave-to-class="opacity-0 -translate-y-1"
-                >
-                  <div v-if="confirmDelete" class="bg-red-50 rounded-xl p-4 border border-red-100">
-                    <p class="text-sm text-red-600 text-center mb-3">
-                      ¿Eliminar <strong>{{ editing?.name }}</strong>? Esta acción no se puede deshacer.
-                    </p>
-                    <div class="flex gap-2">
-                      <button
-                        type="button"
-                        @click="destroy"
-                        class="flex-1 py-2.5 rounded-xl bg-red-500 text-white font-display font-bold text-sm
-                               hover:bg-red-600 active:scale-[0.98] transition-all"
-                      >
-                        Sí, eliminar
-                      </button>
-                      <button
-                        type="button"
-                        @click="confirmDelete = false"
-                        class="flex-1 py-2.5 rounded-xl border border-red-200 text-red-400 font-display font-semibold text-sm
-                               hover:bg-red-50 transition-all"
-                      >
-                        No, cancelar
-                      </button>
-                    </div>
-                  </div>
-                </Transition>
+              <!-- Eliminar (solo en edicion) -->
+              <div v-if="modalMode === 'edit'" class="pt-1">
                 <button
-                  v-if="!confirmDelete"
                   type="button"
-                  @click="confirmDelete = true"
+                  @click="destroy"
                   class="w-full py-2.5 text-center text-xs font-medium text-red-400 hover:text-red-500 transition-colors"
                 >
                   Eliminar producto

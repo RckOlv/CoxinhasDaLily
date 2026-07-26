@@ -25,6 +25,34 @@ class AdminProductController extends Controller
         ]);
     }
 
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'price' => 'required|numeric|min:0',
+            'category_id' => 'nullable|exists:categories,id',
+            'stock_quantity' => 'required|integer|min:0',
+            'badge' => 'nullable|string|max:255',
+            'units_per_package' => 'nullable|integer|min:1',
+            'image' => 'nullable|image|max:2048',
+        ]);
+
+        if ($request->hasFile('image')) {
+            $file = $request->file('image');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $file->move(public_path('img/products'), $filename);
+            $validated['image_path'] = '/img/products/' . $filename;
+        }
+
+        unset($validated['image']);
+        $validated['is_active'] = true;
+
+        Product::create($validated);
+
+        return redirect()->back()->with('success', 'Producto creado');
+    }
+
     public function update(Request $request, Product $product)
     {
         $validated = $request->validate([
@@ -33,6 +61,8 @@ class AdminProductController extends Controller
             'price' => 'required|numeric|min:0',
             'category_id' => 'nullable|exists:categories,id',
             'stock_quantity' => 'required|integer|min:0',
+            'badge' => 'nullable|string|max:255',
+            'units_per_package' => 'nullable|integer|min:1',
             'image' => 'nullable|image|max:2048',
         ]);
 
@@ -41,7 +71,7 @@ class AdminProductController extends Controller
                 unlink(public_path($product->image_path));
             }
             $file = $request->file('image');
-            $filename = 'products/' . time() . '_' . $file->getClientOriginalName();
+            $filename = time() . '_' . $file->getClientOriginalName();
             $file->move(public_path('img/products'), $filename);
             $validated['image_path'] = '/img/products/' . $filename;
             unset($validated['image']);

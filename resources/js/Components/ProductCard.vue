@@ -1,5 +1,5 @@
 <script setup>
-import { computed } from 'vue'
+import { ref, computed } from 'vue'
 import { useCart } from '@/Composables/useCart'
 
 const props = defineProps({
@@ -9,7 +9,27 @@ const props = defineProps({
 
 const { addItem } = useCart()
 
+const quantity = ref(1)
+const added = ref(false)
+
 const hasStock = computed(() => props.product.stock_quantity > 0)
+
+function increment() {
+  if (quantity.value < props.product.stock_quantity) quantity.value++
+}
+
+function decrement() {
+  if (quantity.value > 1) quantity.value--
+}
+
+function add() {
+  for (let i = 0; i < quantity.value; i++) {
+    addItem(props.product)
+  }
+  added.value = true
+  quantity.value = 1
+  setTimeout(() => { added.value = false }, 1200)
+}
 
 function formatPrice(value) {
   return new Intl.NumberFormat('es-AR', {
@@ -31,6 +51,7 @@ function formatPrice(value) {
         v-if="product.image_path"
         :src="product.image_path"
         :alt="product.name"
+        loading="lazy"
         class="w-full h-full object-cover"
       />
       <div v-else class="w-full h-full flex items-center justify-center">
@@ -83,23 +104,70 @@ function formatPrice(value) {
       >
         {{ product.description }}
       </p>
+      <p
+        v-if="product.units_per_package"
+        class="text-[10px] font-semibold text-primary-dark mb-2"
+      >
+        {{ product.units_per_package }} unidades por bolsa
+      </p>
       <div v-else class="flex-1" />
 
-      <!-- Botón agregar / Sin stock -->
-      <button
-        v-if="hasStock"
-        @click="addItem(product)"
-        class="w-full py-2.5 rounded-xl bg-primary text-secondary text-sm font-bold
-               shadow-md shadow-primary/25 active:scale-[0.97] active:shadow-sm
-               transition-all duration-150 flex items-center justify-center gap-1.5
-               hover:bg-primary-dark hover:text-white"
-      >
-        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
-          <line x1="12" y1="5" x2="12" y2="19" />
-          <line x1="5" y1="12" x2="19" y2="12" />
-        </svg>
-        Agregar
-      </button>
+      <!-- Selector de cantidad + Agregar -->
+      <div v-if="hasStock" class="space-y-2">
+        <div class="flex items-center justify-center gap-1">
+          <button
+            @click="decrement"
+            :disabled="quantity <= 1"
+            class="w-9 h-9 rounded-lg border border-primary/20 flex items-center justify-center text-secondary
+                   transition-all active:scale-95 disabled:opacity-30 disabled:cursor-not-allowed
+                   hover:bg-primary/10"
+          >
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+              <line x1="5" y1="12" x2="19" y2="12" />
+            </svg>
+          </button>
+          <span class="w-10 text-center text-sm font-bold text-secondary tabular-nums">
+            {{ quantity }}
+          </span>
+          <button
+            @click="increment"
+            :disabled="quantity >= product.stock_quantity"
+            class="w-9 h-9 rounded-lg border border-primary/20 flex items-center justify-center text-secondary
+                   transition-all active:scale-95 disabled:opacity-30 disabled:cursor-not-allowed
+                   hover:bg-primary/10"
+          >
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+              <line x1="12" y1="5" x2="12" y2="19" />
+              <line x1="5" y1="12" x2="19" y2="12" />
+            </svg>
+          </button>
+        </div>
+
+        <button
+          @click="add"
+          class="w-full py-2.5 rounded-xl text-sm font-bold
+                 shadow-md shadow-primary/25 active:scale-[0.97] active:shadow-sm
+                 transition-all duration-150 flex items-center justify-center gap-1.5"
+          :class="added
+            ? 'bg-green-500 text-white'
+            : 'bg-primary text-secondary hover:bg-primary-dark hover:text-white'"
+        >
+          <template v-if="!added">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+              <line x1="12" y1="5" x2="12" y2="19" />
+              <line x1="5" y1="12" x2="19" y2="12" />
+            </svg>
+            Agregar {{ quantity > 1 ? `(${quantity})` : '' }}
+          </template>
+          <template v-else>
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12" />
+            </svg>
+            Agregado
+          </template>
+        </button>
+      </div>
+
       <button
         v-else
         disabled

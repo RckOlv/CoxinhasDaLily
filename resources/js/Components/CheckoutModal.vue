@@ -1,7 +1,10 @@
 <script setup>
 import { ref, computed } from 'vue'
+import { usePage } from '@inertiajs/vue3'
 import { useCart } from '@/Composables/useCart'
 import axios from 'axios'
+
+const { whatsapp_number } = usePage().props
 
 const props = defineProps({
   open: { type: Boolean, default: false },
@@ -14,13 +17,10 @@ const { items, total, clearCart } = useCart()
 const form = ref({
   name: '',
   address: '',
-  delivery_zone: 'Centro',
   delivery_method: 'pickup',
   payment_method: 'efectivo',
-  delivery_datetime: '',
 })
 
-const zones = ['Centro', 'Estación', 'Barrio Norte', 'Sur', 'Otra']
 const paymentMethods = [
   { value: 'efectivo', label: 'Efectivo' },
   { value: 'transferencia', label: 'Transferencia' },
@@ -44,16 +44,6 @@ function formatPrice(value) {
   }).format(value)
 }
 
-function formatDeliveryDate(isoString) {
-  if (!isoString) return ''
-  const date = new Date(isoString)
-  const day = date.getDate().toString().padStart(2, '0')
-  const month = (date.getMonth() + 1).toString().padStart(2, '0')
-  const hours = date.getHours().toString().padStart(2, '0')
-  const minutes = date.getMinutes().toString().padStart(2, '0')
-  return `${day}/${month} a las ${hours}:${minutes}hs`
-}
-
 function buildWhatsAppMessage() {
   const lines = [
     '¡Hola! Quiero hacer un pedido en *Coxinhas da Lily*:',
@@ -69,21 +59,16 @@ function buildWhatsAppMessage() {
   lines.push('')
 
   if (form.value.delivery_method === 'pickup') {
-    lines.push('📦 Retiro en domicilio de Lily')
+    lines.push('- Retiro en domicilio de Lily')
   } else {
-    lines.push(`🚚 Envío a: ${form.value.address}`)
-    lines.push(`📍 Zona: ${form.value.delivery_zone}`)
-    lines.push('🧊 Cadena de frío asegurada')
+    lines.push(`- Envio a: ${form.value.address}`)
+    lines.push('(El cliente coordina el traslado)')
   }
 
   const payLabel = paymentMethods.find((p) => p.value === form.value.payment_method)?.label
-  lines.push(`💰 Pago: ${payLabel}`)
+  lines.push(`- Pago: ${payLabel}`)
 
-  if (form.value.delivery_datetime) {
-    lines.push(`📅 Para entregar el: ${formatDeliveryDate(form.value.delivery_datetime)}`)
-  }
-
-  lines.push(`👤 A nombre de: ${form.value.name}`)
+  lines.push(`- A nombre de: ${form.value.name}`)
 
   return lines.join('\n')
 }
@@ -108,7 +93,7 @@ async function confirm() {
   }
 
   const text = buildWhatsAppMessage()
-  const phone = '5493758XXXXXX'
+  const phone = whatsapp_number
   const url = `https://wa.me/${phone}?text=${encodeURIComponent(text)}`
   window.open(url, '_blank')
 
@@ -224,7 +209,7 @@ async function confirm() {
                   </span>
                   <div>
                     <p class="text-sm font-semibold text-secondary">Envío</p>
-                    <p class="text-[10px] text-stone-400">Cadena de frío</p>
+                    <p class="text-[10px] text-stone-400">Coordinás el traslado</p>
                   </div>
                 </label>
               </div>
@@ -232,7 +217,7 @@ async function confirm() {
 
             <!-- Dirección (si es envío) -->
             <div v-if="form.delivery_method === 'envio'">
-              <label class="block text-xs font-semibold text-secondary/60 mb-1.5 uppercase tracking-wide">Dirección</label>
+              <label class="block text-xs font-semibold text-secondary/60 mb-1.5 uppercase tracking-wide">Dirección de entrega</label>
               <input
                 v-model="form.address"
                 type="text"
@@ -245,25 +230,7 @@ async function confirm() {
               <p v-if="showErrors && form.delivery_method === 'envio' && !form.address.trim()" class="text-xs text-red-400 mt-1">
                 Ingresá tu dirección
               </p>
-            </div>
-
-            <!-- Zona de envío (si es envío) -->
-            <div v-if="form.delivery_method === 'envio'">
-              <label class="block text-xs font-semibold text-secondary/60 mb-1.5 uppercase tracking-wide">Zona de envío</label>
-              <div class="flex flex-wrap gap-2">
-                <button
-                  v-for="zone in zones"
-                  :key="zone"
-                  @click="form.delivery_zone = zone"
-                  class="px-3 py-1.5 rounded-full text-xs font-semibold border-2 transition-all"
-                  :class="
-                    form.delivery_zone === zone
-                      ? 'bg-primary text-secondary border-primary'
-                      : 'bg-white text-stone-400 border-primary/10 hover:border-primary/30'"
-                >
-                  {{ zone }}
-                </button>
-              </div>
+              <p class="text-[11px] text-stone-400 mt-1.5">Coordiná el envío con un servicio de transporte (Uber, etc.)</p>
             </div>
 
             <!-- Método de pago -->
@@ -283,23 +250,6 @@ async function confirm() {
                   {{ pm.label }}
                 </option>
               </select>
-            </div>
-
-            <!-- Fecha y hora de entrega (opcional) -->
-            <div>
-              <label class="block text-xs font-semibold text-secondary/60 mb-1.5 uppercase tracking-wide">
-                Fecha y hora de entrega
-                <span class="text-stone-300 font-normal normal-case">(opcional)</span>
-              </label>
-              <input
-                v-model="form.delivery_datetime"
-                type="datetime-local"
-                class="w-full px-4 py-3 rounded-xl bg-white border-2 border-primary/15 text-sm text-secondary
-                       transition-colors outline-none
-                       focus:border-primary focus:shadow-[0_0_0_3px_rgba(234,179,8,0.15)]
-                       [color-scheme:light]"
-              />
-              <p class="text-xs text-stone-400 mt-1">Ideal para cumpleaños y eventos</p>
             </div>
 
             <!-- Resumen -->

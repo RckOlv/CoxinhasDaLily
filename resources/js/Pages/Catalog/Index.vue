@@ -25,24 +25,6 @@ const filteredProducts = computed(() => {
 function onCategorySelect(catId) {
   selectedCategoryId.value = catId
 }
-
-const badgeMap = {
-  'Coxinha': 'Apto Freezer',
-  'Pastel de Carne': 'Apto Freezer',
-  'Empanada': 'Rinde 20 un.',
-  'Pão de Queijo': 'Rinde 24 un.',
-  'Coxinha de Palmito': 'Vegano',
-  'Bandeja Executiva': 'Para 10 personas',
-  'Bandeja Festa': 'Para 20 personas',
-  'Bandeja Combo': 'Para 15 personas',
-}
-
-function getBadge(product) {
-  for (const [key, badge] of Object.entries(badgeMap)) {
-    if (product.name.includes(key)) return badge
-  }
-  return null
-}
 </script>
 
 <template>
@@ -83,7 +65,7 @@ function getBadge(product) {
           v-for="product in filteredProducts"
           :key="product.id"
           :product="product"
-          :badge="getBadge(product)"
+          :badge="product.badge"
         />
       </div>
 
