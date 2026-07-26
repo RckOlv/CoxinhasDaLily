@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\URL;
 use Symfony\Component\HttpFoundation\Response;
 
 class ForceHttpsMiddleware
@@ -11,8 +12,7 @@ class ForceHttpsMiddleware
     public function handle(Request $request, Closure $next): Response
     {
         if ($request->header('X-Forwarded-Proto') === 'https') {
-            $request->setSecureScheme(true);
-            $request->server->set('HTTPS', 'on');
+            URL::forceScheme('https');
         }
 
         return $next($request);
