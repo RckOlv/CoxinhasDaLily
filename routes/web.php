@@ -1,8 +1,10 @@
 <?php
 
 use App\Http\Controllers\AdminCategoryController;
+use App\Http\Controllers\AdminEventController;
 use App\Http\Controllers\AdminProductController;
 use App\Http\Controllers\CatalogController;
+use App\Http\Controllers\EventFormController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -11,6 +13,9 @@ Route::get('/', function () {
 })->name('home');
 
 Route::get('/productos', [CatalogController::class, 'index'])->name('catalog.index');
+
+Route::get('/eventos', [EventFormController::class, 'show'])->name('events.form');
+Route::post('/eventos', [EventFormController::class, 'store'])->name('events.store');
 
 Route::prefix('admin')->middleware('auth')->group(function () {
     Route::get('/productos', [AdminProductController::class, 'index'])->name('admin.products');
@@ -22,6 +27,9 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     Route::post('/categorias', [AdminCategoryController::class, 'store'])->name('admin.categories.store');
     Route::put('/categorias/{category}', [AdminCategoryController::class, 'update'])->name('admin.categories.update');
     Route::delete('/categorias/{category}', [AdminCategoryController::class, 'destroy'])->name('admin.categories.destroy');
+
+    Route::get('/eventos', [AdminEventController::class, 'index'])->name('admin.events');
+    Route::put('/eventos/{event}', [AdminEventController::class, 'update'])->name('admin.events.update');
 });
 
 require __DIR__.'/auth.php';

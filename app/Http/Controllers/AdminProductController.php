@@ -35,6 +35,7 @@ class AdminProductController extends Controller
             'stock_quantity' => 'required|integer|min:0',
             'badge' => 'nullable|string|max:255',
             'units_per_package' => 'nullable|integer|min:1',
+            'is_event' => 'nullable|boolean',
             'image' => 'nullable|image|max:2048',
         ]);
 
@@ -47,6 +48,7 @@ class AdminProductController extends Controller
 
         unset($validated['image']);
         $validated['is_active'] = true;
+        $validated['is_event'] = $request->boolean('is_event');
 
         Product::create($validated);
 
@@ -63,6 +65,7 @@ class AdminProductController extends Controller
             'stock_quantity' => 'required|integer|min:0',
             'badge' => 'nullable|string|max:255',
             'units_per_package' => 'nullable|integer|min:1',
+            'is_event' => 'nullable|boolean',
             'image' => 'nullable|image|max:2048',
         ]);
 
@@ -79,6 +82,7 @@ class AdminProductController extends Controller
             unset($validated['image']);
         }
 
+        $validated['is_event'] = $request->boolean('is_event');
         $product->update($validated);
 
         return redirect()->back()->with('success', 'Producto actualizado');

@@ -99,12 +99,20 @@ async function destroy(category) {
     <!-- Header -->
     <div class="sticky top-0 z-40 bg-cream/95 backdrop-blur-sm border-b border-primary/10">
       <div class="flex items-center justify-between h-16 px-4 sm:px-6 max-w-5xl mx-auto">
-        <Link
-          href="/admin/productos"
-          class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-primary/15 text-primary-dark hover:bg-primary/25 transition-all"
-        >
-          Productos
-        </Link>
+        <div class="flex items-center gap-2">
+          <Link
+            href="/admin/productos"
+            class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-primary/15 text-primary-dark hover:bg-primary/25 transition-all"
+          >
+            Productos
+          </Link>
+          <Link
+            href="/admin/eventos"
+            class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-primary/15 text-primary-dark hover:bg-primary/25 transition-all"
+          >
+            Eventos
+          </Link>
+        </div>
         <Link href="/" class="shrink-0">
           <img src="/img/logolily.png" alt="Coxinhas da Lily" class="h-12 w-auto" />
         </Link>

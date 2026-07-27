@@ -286,6 +286,41 @@ onBeforeUnmount(() => {
       </Transition>
     </Teleport>
 
+    <!-- Sección Eventos -->
+    <section class="bg-cream py-14 sm:py-20">
+      <div class="max-w-lg mx-auto px-5 text-center">
+        <div class="w-16 h-16 mx-auto rounded-2xl bg-primary/15 flex items-center justify-center mb-5">
+          <svg class="w-8 h-8 text-primary-dark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+            <circle cx="12" cy="7" r="4" />
+          </svg>
+        </div>
+        <h2 class="font-display font-bold text-xl sm:text-2xl text-secondary mb-2">
+          ¿Querés que esté en tu evento?
+        </h2>
+        <p class="text-secondary/50 text-sm mb-3 max-w-md mx-auto leading-relaxed">
+          Armamos el menú ideal para tu cumpleaños, casamiento o evento especial.
+          Elegí los productos y te armamos el presupuesto.
+        </p>
+        <p class="text-secondary/40 text-xs mb-6">
+          Mínimo 100 personas - Retiro en domicilio
+        </p>
+        <Link
+          href="/eventos"
+          class="inline-flex items-center gap-2 px-6 py-3.5 rounded-2xl bg-secondary text-cream font-display font-bold text-sm
+                 shadow-lg shadow-secondary/20 hover:scale-105 active:scale-[0.97] transition-all duration-300"
+        >
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+            <line x1="16" y1="2" x2="16" y2="6" />
+            <line x1="8" y1="2" x2="8" y2="6" />
+            <line x1="3" y1="10" x2="21" y2="10" />
+          </svg>
+          Armar mi evento
+        </Link>
+      </div>
+    </section>
+
     <!-- Sección Cursos -->
     <section id="cursos" class="bg-cream py-14 sm:py-20">
       <div class="max-w-lg mx-auto px-5 text-center">

@@ -40,7 +40,7 @@ function formatPrice(value) {
 }
 
 function resetForm() {
-  form.value = { name: '', description: '', price: '', category_id: '', stock_quantity: 0, badge: '', units_per_package: '' }
+  form.value = { name: '', description: '', price: '', category_id: '', stock_quantity: 0, badge: '', units_per_package: '', is_event: false }
   imagePreview.value = null
   imageFile.value = null
   saving.value = false
@@ -65,6 +65,7 @@ function openEdit(product) {
     stock_quantity: product.stock_quantity,
     badge: product.badge || '',
     units_per_package: product.units_per_package || '',
+    is_event: product.is_event || false,
   }
   imagePreview.value = product.image_path || null
   showModal.value = true
@@ -93,6 +94,7 @@ function save() {
   data.append('stock_quantity', form.value.stock_quantity)
   data.append('badge', form.value.badge)
   data.append('units_per_package', form.value.units_per_package)
+  data.append('is_event', form.value.is_event ? '1' : '0')
   if (imageFile.value) {
     data.append('image', imageFile.value)
   }
@@ -148,12 +150,20 @@ async function destroy() {
     <!-- Header -->
     <div class="sticky top-0 z-40 bg-cream/95 backdrop-blur-sm border-b border-primary/10">
       <div class="flex items-center justify-between h-16 px-4 sm:px-6 max-w-5xl mx-auto">
-        <Link
-          href="/admin/categorias"
-          class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-primary/15 text-primary-dark hover:bg-primary/25 transition-all"
-        >
-          Categorías
-        </Link>
+        <div class="flex items-center gap-2">
+          <Link
+            href="/admin/categorias"
+            class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-primary/15 text-primary-dark hover:bg-primary/25 transition-all"
+          >
+            Categorías
+          </Link>
+          <Link
+            href="/admin/eventos"
+            class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-primary/15 text-primary-dark hover:bg-primary/25 transition-all"
+          >
+            Eventos
+          </Link>
+        </div>
         <Link href="/" class="shrink-0">
           <img src="/img/logolily.png" alt="Coxinhas da Lily" class="h-12 w-auto" />
         </Link>
@@ -467,6 +477,19 @@ async function destroy() {
                     placeholder="Ej: 25"
                   />
                 </div>
+              </div>
+
+              <!-- Producto para eventos -->
+              <div>
+                <label class="flex items-center gap-3 cursor-pointer">
+                  <input
+                    v-model="form.is_event"
+                    type="checkbox"
+                    class="w-4 h-4 rounded border-stone-300 text-primary focus:ring-primary/30 cursor-pointer"
+                  />
+                  <span class="text-sm text-secondary">Producto para eventos</span>
+                </label>
+                <p class="text-xs text-secondary/40 mt-1 ml-7">Aparece en el formulario de solicitudes de evento</p>
               </div>
 
               <!-- Botones -->
