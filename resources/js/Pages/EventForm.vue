@@ -47,23 +47,35 @@ const groupedProducts = computed(() => {
 
 const selectedCount = computed(() => form.value.products.length)
 
+function validateDate() {
+  if (!form.value.event_date) return
+  const selected = new Date(form.value.event_date + 'T12:00:00')
+  const minDate = new Date()
+  minDate.setDate(minDate.getDate() + 15)
+  minDate.setHours(12, 0, 0, 0)
+
+  if (selected < minDate) {
+    const day = minDate.getDate()
+    const month = minDate.toLocaleDateString('es-AR', { month: 'long' })
+    const year = minDate.getFullYear()
+    errors.value.event_date = `Los eventos se piden con 15 días de anticipación. Elegí una fecha posterior al ${day} de ${month} de ${year}`
+  } else {
+    errors.value.event_date = null
+  }
+}
+
+function todayStr() {
+  const now = new Date()
+  const year = now.getFullYear()
+  const month = String(now.getMonth() + 1).padStart(2, '0')
+  const day = String(now.getDate()).padStart(2, '0')
+  return `${year}-${month}-${day}`
+}
+
 function submit() {
   errors.value = {}
-
-  if (form.value.event_date) {
-    const selected = new Date(form.value.event_date + 'T12:00:00')
-    const minDate = new Date()
-    minDate.setDate(minDate.getDate() + 15)
-    minDate.setHours(12, 0, 0, 0)
-
-    if (selected < minDate) {
-      const day = minDate.getDate()
-      const month = minDate.toLocaleDateString('es-AR', { month: 'long' })
-      const year = minDate.getFullYear()
-      errors.value.event_date = `Los eventos se piden con 15 días de anticipación. Elegí una fecha posterior al ${day} de ${month} de ${year}`
-      return
-    }
-  }
+  validateDate()
+  if (errors.value.event_date) return
 
   sending.value = true
 
@@ -145,6 +157,8 @@ function submit() {
                 v-model="form.event_date"
                 type="date"
                 required
+                :min="todayStr()"
+                @change="validateDate"
                 class="w-full px-4 py-3 rounded-xl bg-cream border-2 text-sm text-secondary
                        transition-colors outline-none focus:border-primary focus:shadow-[0_0_0_3px_rgba(234,179,8,0.15)]"
                 :class="errors.event_date ? 'border-red-300' : 'border-primary/15'"
