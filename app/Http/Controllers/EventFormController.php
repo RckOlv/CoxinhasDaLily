@@ -28,7 +28,7 @@ class EventFormController extends Controller
         $validated = $request->validate([
             'client_name' => 'required|string|max:255',
             'client_whatsapp' => 'required|string|max:255',
-            'event_date' => 'required|date|after:today',
+            'event_date' => 'required|date|after_or_equal:' . now()->addDays(15)->format('Y-m-d'),
             'quantity' => 'required|integer|min:100',
             'pickup_time' => 'required|string|max:255',
             'event_type' => 'required|string|max:255',

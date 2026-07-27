@@ -49,6 +49,22 @@ const selectedCount = computed(() => form.value.products.length)
 
 function submit() {
   errors.value = {}
+
+  if (form.value.event_date) {
+    const selected = new Date(form.value.event_date + 'T12:00:00')
+    const minDate = new Date()
+    minDate.setDate(minDate.getDate() + 15)
+    minDate.setHours(12, 0, 0, 0)
+
+    if (selected < minDate) {
+      const day = minDate.getDate()
+      const month = minDate.toLocaleDateString('es-AR', { month: 'long' })
+      const year = minDate.getFullYear()
+      errors.value.event_date = `Los eventos se piden con 15 días de anticipación. Elegí una fecha posterior al ${day} de ${month} de ${year}`
+      return
+    }
+  }
+
   sending.value = true
 
   router.post('/eventos', form.value, {
@@ -62,15 +78,6 @@ function submit() {
   })
 }
 
-function todayStr() {
-  const now = new Date()
-  const argDate = new Date(now.toLocaleString('en-US', { timeZone: 'America/Argentina/Buenos_Aires' }))
-  argDate.setDate(argDate.getDate() + 15)
-  const year = argDate.getFullYear()
-  const month = String(argDate.getMonth() + 1).padStart(2, '0')
-  const day = String(argDate.getDate()).padStart(2, '0')
-  return `${year}-${month}-${day}`
-}
 </script>
 
 <template>
@@ -138,12 +145,12 @@ function todayStr() {
                 v-model="form.event_date"
                 type="date"
                 required
-                :min="todayStr()"
                 class="w-full px-4 py-3 rounded-xl bg-cream border-2 text-sm text-secondary
                        transition-colors outline-none focus:border-primary focus:shadow-[0_0_0_3px_rgba(234,179,8,0.15)]"
                 :class="errors.event_date ? 'border-red-300' : 'border-primary/15'"
               />
               <p v-if="errors.event_date" class="text-red-500 text-xs mt-1">{{ errors.event_date }}</p>
+              <p v-else class="text-secondary/40 text-[11px] mt-1">Mínimo 15 días de anticipación</p>
             </div>
             <div>
               <label class="block text-xs font-semibold text-secondary/60 mb-1.5 uppercase tracking-wide">Horario de retiro *</label>
