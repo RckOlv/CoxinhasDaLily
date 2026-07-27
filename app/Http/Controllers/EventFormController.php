@@ -49,11 +49,15 @@ class EventFormController extends Controller
 
         $eventDate = Carbon::parse($validated['event_date']);
 
-        $saturday = (clone $eventDate)->startOfWeek(Carbon::SATURDAY);
-        $sunday = (clone $saturday)->addDay();
+        $saturdayOffset = ($eventDate->dayOfWeek + 1) % 7;
+        $saturday = (clone $eventDate)->subDays($saturdayOffset)->startOfDay();
+        $sunday = (clone $saturday)->addDay()->endOfDay();
 
         $weekendCount = Event::where('status', '!=', 'cancelado')
-            ->whereBetween('event_date', [$saturday->toDateString(), $sunday->toDateString()])
+            ->whereBetween('event_date', [
+                $saturday->toDateString(),
+                $sunday->toDateString(),
+            ])
             ->count();
 
         if ($weekendCount >= 2) {

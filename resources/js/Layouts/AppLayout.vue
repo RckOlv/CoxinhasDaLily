@@ -158,7 +158,7 @@ onBeforeUnmount(() => {
       <slot />
     </main>
 
-    <!-- Bottom Nav Bar (solo mobile/tablet, hidden on admin) -->
+    <!-- Bottom Nav Bar Public (mobile) -->
     <nav v-if="!isAdmin" class="fixed bottom-0 left-0 right-0 z-50 bg-cream/95 border-t border-primary/10 shadow-[0_-4px_20px_rgba(120,53,15,0.06)] backdrop-blur-sm lg:hidden">
       <div class="flex items-center justify-around h-16 max-w-lg mx-auto">
         <Link
@@ -216,6 +216,75 @@ onBeforeUnmount(() => {
           </span>
           Carrito
         </button>
+      </div>
+    </nav>
+
+    <!-- Bottom Nav Bar Admin (mobile) -->
+    <nav v-if="isAdmin" class="fixed bottom-0 left-0 right-0 z-50 bg-secondary border-t border-secondary/80 shadow-[0_-4px_20px_rgba(0,0,0,0.15)] lg:hidden">
+      <div class="flex items-center justify-around h-16 max-w-lg mx-auto">
+        <Link
+          href="/admin/productos"
+          class="flex flex-col items-center gap-0.5 px-3 py-1 text-xs font-medium transition-colors"
+          :class="$page.url.startsWith('/admin/productos') ? 'text-primary' : 'text-white/50 hover:text-white'"
+        >
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="7" height="7" rx="1" />
+            <rect x="14" y="3" width="7" height="7" rx="1" />
+            <rect x="3" y="14" width="7" height="7" rx="1" />
+            <rect x="14" y="14" width="7" height="7" rx="1" />
+          </svg>
+          Productos
+        </Link>
+        <Link
+          href="/admin/categorias"
+          class="flex flex-col items-center gap-0.5 px-3 py-1 text-xs font-medium transition-colors"
+          :class="$page.url.startsWith('/admin/categorias') ? 'text-primary' : 'text-white/50 hover:text-white'"
+        >
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="8" y1="6" x2="21" y2="6" />
+            <line x1="8" y1="12" x2="21" y2="12" />
+            <line x1="8" y1="18" x2="21" y2="18" />
+            <line x1="3" y1="6" x2="3.01" y2="6" />
+            <line x1="3" y1="12" x2="3.01" y2="12" />
+            <line x1="3" y1="18" x2="3.01" y2="18" />
+          </svg>
+          Categorías
+        </Link>
+        <Link
+          href="/admin/eventos"
+          class="flex flex-col items-center gap-0.5 px-3 py-1 text-xs font-medium transition-colors"
+          :class="$page.url.startsWith('/admin/eventos') ? 'text-primary' : 'text-white/50 hover:text-white'"
+        >
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+            <line x1="16" y1="2" x2="16" y2="6" />
+            <line x1="8" y1="2" x2="8" y2="6" />
+            <line x1="3" y1="10" x2="21" y2="10" />
+          </svg>
+          Eventos
+        </Link>
+        <Link
+          href="/admin/pedidos"
+          class="flex flex-col items-center gap-0.5 px-3 py-1 text-xs font-medium transition-colors"
+          :class="$page.url.startsWith('/admin/pedidos') ? 'text-primary' : 'text-white/50 hover:text-white'"
+        >
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2" />
+            <rect x="9" y="3" width="6" height="4" rx="1" />
+          </svg>
+          Pedidos
+        </Link>
+        <Link
+          href="/"
+          class="flex flex-col items-center gap-0.5 px-3 py-1 text-xs font-medium transition-colors text-white/50 hover:text-white"
+        >
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10" />
+            <line x1="15" y1="9" x2="9.707" y2="15.293" />
+            <line x1="9" y1="9" x2="15.293" y2="9.707" />
+          </svg>
+          Tienda
+        </Link>
       </div>
     </nav>
 

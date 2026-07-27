@@ -16,7 +16,7 @@ function isActive(href) {
 </script>
 
 <template>
-  <div class="sticky top-0 z-40 bg-cream/95 backdrop-blur-sm border-b border-primary/10">
+  <div class="sticky top-0 z-40 bg-cream/95 backdrop-blur-sm border-b border-primary/10 hidden lg:block">
     <div class="flex items-center justify-between h-14 px-4 sm:px-6 max-w-5xl mx-auto">
       <!-- Logo izquierda -->
       <Link href="/" class="shrink-0">
