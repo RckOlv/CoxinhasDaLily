@@ -5,6 +5,7 @@ import AppLayout from '@/Layouts/AppLayout.vue'
 
 const props = defineProps({
   products: Array,
+  occupiedDates: { type: Array, default: () => [] },
 })
 
 const form = ref({
@@ -48,7 +49,11 @@ const groupedProducts = computed(() => {
 const selectedCount = computed(() => form.value.products.length)
 
 function validateDate() {
+  errors.value.event_date = null
+  dateWarning.value = null
+
   if (!form.value.event_date) return
+
   const selected = new Date(form.value.event_date + 'T12:00:00')
   const minDate = new Date()
   minDate.setDate(minDate.getDate() + 15)
@@ -59,10 +64,15 @@ function validateDate() {
     const month = minDate.toLocaleDateString('es-AR', { month: 'long' })
     const year = minDate.getFullYear()
     errors.value.event_date = `Los eventos se piden con 15 días de anticipación. Elegí una fecha posterior al ${day} de ${month} de ${year}`
-  } else {
-    errors.value.event_date = null
+    return
+  }
+
+  if (props.occupiedDates.includes(form.value.event_date)) {
+    dateWarning.value = 'Esa fecha ya tiene un evento. Podemos igualmente recibirla y Lily te avisará si puede.'
   }
 }
+
+const dateWarning = ref(null)
 
 function todayStr() {
   const now = new Date()
@@ -164,6 +174,7 @@ function submit() {
                 :class="errors.event_date ? 'border-red-300' : 'border-primary/15'"
               />
               <p v-if="errors.event_date" class="text-red-500 text-xs mt-1">{{ errors.event_date }}</p>
+              <p v-else-if="dateWarning" class="text-amber-600 text-[11px] mt-1">{{ dateWarning }}</p>
               <p v-else class="text-secondary/40 text-[11px] mt-1">Mínimo 15 días de anticipación</p>
             </div>
             <div>
@@ -172,6 +183,7 @@ function submit() {
                 v-model="form.pickup_time"
                 type="time"
                 required
+                min="08:00"
                 class="w-full px-4 py-3 rounded-xl bg-cream border-2 text-sm text-secondary
                        transition-colors outline-none focus:border-primary focus:shadow-[0_0_0_3px_rgba(234,179,8,0.15)]"
                 :class="errors.pickup_time ? 'border-red-300' : 'border-primary/15'"

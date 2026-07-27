@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Event;
 use App\Models\Product;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
 class EventFormController extends Controller
@@ -18,8 +20,15 @@ class EventFormController extends Controller
             ->orderBy('name')
             ->get();
 
+        $occupiedDates = Event::where('status', '!=', 'cancelado')
+            ->where('event_date', '>=', now()->toDateString())
+            ->pluck('event_date')
+            ->map(fn ($d) => Carbon::parse($d)->format('Y-m-d'))
+            ->values();
+
         return Inertia::render('EventForm', [
             'products' => $products,
+            'occupiedDates' => $occupiedDates,
         ]);
     }
 
@@ -37,6 +46,32 @@ class EventFormController extends Controller
             'products' => 'required|array|min:1',
             'products.*.id' => 'required|exists:products,id',
         ]);
+
+        $eventDate = Carbon::parse($validated['event_date']);
+
+        $saturday = (clone $eventDate)->startOfWeek(Carbon::SATURDAY);
+        $sunday = (clone $saturday)->addDay();
+
+        $weekendCount = Event::where('status', '!=', 'cancelado')
+            ->whereBetween('event_date', [$saturday->toDateString(), $sunday->toDateString()])
+            ->count();
+
+        if ($weekendCount >= 2) {
+            return back()->withErrors([
+                'event_date' => 'Ese fin de semana ya tiene 2 eventos. Elegí otra fecha.',
+            ])->withInput();
+        }
+
+        $monthCount = Event::where('status', '!=', 'cancelado')
+            ->whereYear('event_date', $eventDate->year)
+            ->whereMonth('event_date', $eventDate->month)
+            ->count();
+
+        if ($monthCount >= 12) {
+            return back()->withErrors([
+                'event_date' => 'Ese mes ya tiene 12 eventos. Elegí otra fecha.',
+            ])->withInput();
+        }
 
         $event = Event::create([
             'client_name' => $validated['client_name'],
