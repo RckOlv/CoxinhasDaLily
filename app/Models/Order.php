@@ -16,6 +16,7 @@ class Order extends Model
         'total',
         'status',
         'stock_decremented',
+        'push_endpoint',
     ];
 
     protected $casts = [

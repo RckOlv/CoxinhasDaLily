@@ -84,6 +84,18 @@ async function confirm() {
 
   sending.value = true
 
+  // Capturar suscripción push si está disponible
+  let pushEndpoint = null
+  try {
+    if ('serviceWorker' in navigator && 'PushManager' in window) {
+      const reg = await navigator.serviceWorker.ready
+      const sub = await reg.pushManager.getSubscription()
+      if (sub) {
+        pushEndpoint = sub.endpoint
+      }
+    }
+  } catch {}
+
   // Crear pedido en BD
   try {
     await axios.post('/api/checkout', {
@@ -92,6 +104,7 @@ async function confirm() {
       delivery_method: form.value.delivery_method,
       delivery_address: form.value.address || null,
       payment_method: form.value.payment_method,
+      push_endpoint: pushEndpoint,
       items: items.value.map((item) => ({
         product_id: item.product_id,
         quantity: item.quantity,

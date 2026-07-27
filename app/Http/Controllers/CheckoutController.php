@@ -21,6 +21,7 @@ class CheckoutController extends Controller
             'items.*.product_id' => 'required|integer|exists:products,id',
             'items.*.quantity' => 'required|integer|min:1',
             'items.*.price' => 'required|numeric|min:0',
+            'push_endpoint' => 'nullable|string',
         ]);
 
         $total = collect($validated['items'])->sum(fn ($item) => $item['price'] * $item['quantity']);
@@ -32,6 +33,7 @@ class CheckoutController extends Controller
             'delivery_address' => $validated['delivery_address'] ?? null,
             'payment_method' => $validated['payment_method'],
             'total' => $total,
+            'push_endpoint' => $validated['push_endpoint'] ?? null,
         ]);
 
         foreach ($validated['items'] as $item) {
