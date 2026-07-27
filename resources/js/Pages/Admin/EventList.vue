@@ -2,6 +2,7 @@
 import { ref, computed } from 'vue'
 import { Head, router, usePage } from '@inertiajs/vue3'
 import AppLayout from '@/Layouts/AppLayout.vue'
+import AdminHeader from '@/Components/AdminHeader.vue'
 import Swal from 'sweetalert2'
 
 const props = defineProps({
@@ -132,14 +133,11 @@ function formatDate(date) {
     <Head :title="`Eventos - ${appName}`" />
 
     <div class="bg-cream min-h-screen pb-24 lg:pb-8">
-      <!-- Header -->
-      <div class="bg-secondary py-6 px-5 text-center relative">
-        <a :href="route('admin.products')" class="absolute top-4 left-4 w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors">
-          <svg class="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="15 18 9 12 15 6" />
-          </svg>
-        </a>
-        <h1 class="font-display font-bold text-xl text-white">
+      <AdminHeader />
+
+      <!-- Sub-header -->
+      <div class="bg-secondary py-4 px-5 text-center">
+        <h1 class="font-display font-bold text-lg text-white">
           Eventos
         </h1>
         <p class="text-white/50 text-xs mt-1">

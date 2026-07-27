@@ -2,6 +2,7 @@
 import { ref } from 'vue'
 import { Link, router } from '@inertiajs/vue3'
 import AppLayout from '@/Layouts/AppLayout.vue'
+import AdminHeader from '@/Components/AdminHeader.vue'
 import Swal from 'sweetalert2'
 
 const props = defineProps({
@@ -96,42 +97,7 @@ async function destroy(category) {
 
 <template>
   <AppLayout>
-    <!-- Header -->
-    <div class="sticky top-0 z-40 bg-cream/95 backdrop-blur-sm border-b border-primary/10">
-      <div class="flex items-center justify-between h-16 px-4 sm:px-6 max-w-5xl mx-auto">
-        <div class="flex items-center gap-2">
-          <Link
-            href="/admin/productos"
-            class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-primary/15 text-primary-dark hover:bg-primary/25 transition-all"
-          >
-            Productos
-          </Link>
-          <Link
-            href="/admin/eventos"
-            class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-primary/15 text-primary-dark hover:bg-primary/25 transition-all"
-          >
-            Eventos
-          </Link>
-        </div>
-        <Link href="/" class="shrink-0">
-          <img src="/img/logolily.png" alt="Coxinhas da Lily" class="h-12 w-auto" />
-        </Link>
-        <div class="flex items-center gap-2">
-          <Link
-            href="/"
-            class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-secondary/10 text-secondary/70 hover:bg-secondary/20 transition-all"
-          >
-            Ver tienda
-          </Link>
-          <button
-            @click="logout"
-            class="px-3 py-1.5 rounded-lg text-xs font-semibold text-red-400 hover:bg-red-50 transition-all"
-          >
-            Salir
-          </button>
-        </div>
-      </div>
-    </div>
+    <AdminHeader />
 
     <!-- Lista -->
     <div class="px-4 sm:px-6 py-4 max-w-5xl mx-auto pb-28 lg:pb-8">
