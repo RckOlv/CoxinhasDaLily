@@ -389,15 +389,5 @@ onBeforeUnmount(() => {
         </div>
       </div>
     </section>
-
-    <!-- Login Lily -->
-    <div class="bg-cream py-6 text-center">
-      <a
-        href="/login"
-        class="text-xs text-secondary/25 hover:text-secondary/50 transition-colors"
-      >
-        Iniciar sesión
-      </a>
-    </div>
   </AppLayout>
 </template>

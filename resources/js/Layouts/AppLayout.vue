@@ -97,8 +97,22 @@ onBeforeUnmount(() => {
           </Link>
         </nav>
 
-        <!-- Derecha: Carrito -->
-        <div class="flex-1 flex justify-end">
+        <!-- Derecha: Login + Carrito -->
+        <div class="flex-1 flex items-center justify-end gap-1">
+          <Link
+            v-if="!$page.props.auth?.user"
+            href="/login"
+            class="hidden lg:flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold transition-colors"
+            :class="isHome
+              ? (scrolled ? 'text-secondary/50 hover:text-secondary hover:bg-primary/5' : 'text-white/50 hover:text-white hover:bg-white/10')
+              : 'text-secondary/40 hover:text-secondary hover:bg-primary/5'"
+          >
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+              <circle cx="12" cy="7" r="4" />
+            </svg>
+            Iniciar sesión
+          </Link>
           <button
             @click="showCart = true"
             class="relative flex items-center justify-center w-10 h-10 rounded-xl transition-colors active:scale-95"
