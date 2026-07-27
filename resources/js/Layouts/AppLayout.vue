@@ -142,14 +142,28 @@ onBeforeUnmount(() => {
         </div>
       </div>
 
-      <!-- Mobile: Logo centrado -->
+      <!-- Mobile: Logo centrado + Login -->
       <div class="flex lg:hidden items-center justify-between h-16 px-4 sm:px-6">
         <div class="flex-1" />
         <Link v-if="!isHome" href="/" class="flex-1 flex justify-center">
           <img src="/img/logolily.png" alt="Coxinhas da Lily" class="h-12 w-auto" />
         </Link>
         <div v-else class="flex-1" />
-        <div class="flex-1" />
+        <div class="flex-1 flex justify-end">
+          <Link
+            v-if="!$page.props.auth?.user"
+            href="/login"
+            class="flex items-center justify-center w-9 h-9 rounded-full transition-colors active:scale-95"
+            :class="isHome
+              ? (scrolled ? 'text-secondary/50 hover:bg-primary/10' : 'text-white/60 hover:bg-white/10')
+              : 'text-secondary/40 hover:bg-primary/10'"
+          >
+            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+              <circle cx="12" cy="7" r="4" />
+            </svg>
+          </Link>
+        </div>
       </div>
     </header>
 
