@@ -57,7 +57,7 @@ class EventFormController extends Controller
 
         $whatsappUrl = $this->buildWhatsAppUrl($event);
 
-        return redirect()->away($whatsappUrl);
+        return Inertia::location($whatsappUrl);
     }
 
     private function buildWhatsAppUrl(Event $event): string

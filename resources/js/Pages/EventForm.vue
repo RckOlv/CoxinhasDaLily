@@ -75,7 +75,12 @@ function todayStr() {
 
     <div class="bg-cream min-h-screen pb-24 lg:pb-8">
       <!-- Header -->
-      <div class="bg-secondary py-8 sm:py-10 text-center">
+      <div class="bg-secondary py-8 sm:py-10 text-center relative">
+        <a href="/" class="absolute top-4 left-4 w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors">
+          <svg class="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="15 18 9 12 15 6" />
+          </svg>
+        </a>
         <h1 class="font-display font-bold text-2xl sm:text-3xl text-white mb-1">
           ¿Querés que esté en tu evento?
         </h1>
