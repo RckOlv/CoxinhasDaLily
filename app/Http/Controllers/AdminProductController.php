@@ -98,4 +98,18 @@ class AdminProductController extends Controller
 
         return redirect()->back()->with('success', 'Producto eliminado');
     }
+
+    public function updateStock(Request $request, Product $product)
+    {
+        $validated = $request->validate([
+            'stock_quantity' => 'required|integer|min:0',
+        ]);
+
+        $product->update($validated);
+
+        return response()->json([
+            'success' => true,
+            'stock_quantity' => $product->stock_quantity,
+        ]);
+    }
 }

@@ -143,6 +143,43 @@ async function destroy() {
     preserveScroll: true,
   })
 }
+
+const updatingStock = ref(null)
+
+async function updateStock(product, newQty) {
+  const qty = Math.max(0, parseInt(newQty) || 0)
+  if (qty === product.stock_quantity) return
+
+  updatingStock.value = product.id
+  try {
+    const res = await fetch(`/admin/productos/${product.id}/stock`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+        'X-Requested-With': 'XMLHttpRequest',
+      },
+      body: JSON.stringify({ stock_quantity: qty }),
+    })
+    const data = await res.json()
+    if (data.success) {
+      product.stock_quantity = data.stock_quantity
+    }
+  } catch {
+    Toast.fire({ icon: 'error', title: 'Error al actualizar stock' })
+  }
+  updatingStock.value = null
+}
+
+function incrementStock(product) {
+  updateStock(product, product.stock_quantity + 1)
+}
+
+function decrementStock(product) {
+  if (product.stock_quantity > 0) {
+    updateStock(product, product.stock_quantity - 1)
+  }
+}
 </script>
 
 <template>
@@ -244,24 +281,36 @@ async function destroy() {
 
                 <div class="flex items-center gap-1">
                   <button
+                    @click="decrementStock(product)"
+                    :disabled="updatingStock === product.id || product.stock_quantity <= 0"
                     class="w-7 h-7 rounded-lg bg-secondary/5 flex items-center justify-center
                            text-secondary/50 hover:bg-secondary/10 hover:text-secondary
-                           active:scale-90 transition-all"
+                           active:scale-90 transition-all disabled:opacity-30 disabled:cursor-not-allowed"
                   >
                     <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
                       <line x1="5" y1="12" x2="19" y2="12" />
                     </svg>
                   </button>
-                  <span
-                    class="w-9 text-center text-sm font-bold tabular-nums"
-                    :class="product.stock_quantity > 0 ? 'text-secondary' : 'text-red-400'"
-                  >
-                    {{ product.stock_quantity }}
-                  </span>
+                  <input
+                    type="number"
+                    min="0"
+                    :value="product.stock_quantity"
+                    @change="updateStock(product, $event.target.value)"
+                    @blur="updateStock(product, $event.target.value)"
+                    class="w-14 text-center text-sm font-bold tabular-nums bg-transparent border border-primary/10
+                           rounded-lg py-1 outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/30
+                           transition-all"
+                    :class="[
+                      updatingStock === product.id ? 'opacity-50' : '',
+                      product.stock_quantity > 0 ? 'text-secondary' : 'text-red-400',
+                    ]"
+                  />
                   <button
+                    @click="incrementStock(product)"
+                    :disabled="updatingStock === product.id"
                     class="w-7 h-7 rounded-lg bg-secondary/5 flex items-center justify-center
                            text-secondary/50 hover:bg-secondary/10 hover:text-secondary
-                           active:scale-90 transition-all"
+                           active:scale-90 transition-all disabled:opacity-30 disabled:cursor-not-allowed"
                   >
                     <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
                       <line x1="12" y1="5" x2="12" y2="19" />

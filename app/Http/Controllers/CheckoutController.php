@@ -2,45 +2,46 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Order;
 use App\Models\Product;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 class CheckoutController extends Controller
 {
-    public function decrementStock(Request $request): JsonResponse
+    public function store(Request $request): JsonResponse
     {
         $validated = $request->validate([
+            'client_name' => 'required|string|max:255',
+            'client_whatsapp' => 'required|string|max:255',
+            'delivery_method' => 'required|in:pickup,envio',
+            'delivery_address' => 'nullable|string|max:255',
+            'payment_method' => 'required|in:efectivo,transferencia,mercadopago',
             'items' => 'required|array|min:1',
             'items.*.product_id' => 'required|integer|exists:products,id',
             'items.*.quantity' => 'required|integer|min:1',
+            'items.*.price' => 'required|numeric|min:0',
         ]);
 
-        $result = DB::transaction(function () use ($validated) {
-            $decremented = [];
+        $total = collect($validated['items'])->sum(fn ($item) => $item['price'] * $item['quantity']);
 
-            foreach ($validated['items'] as $item) {
-                $product = Product::lockForUpdate()->find($item['product_id']);
+        $order = Order::create([
+            'client_name' => $validated['client_name'],
+            'client_whatsapp' => $validated['client_whatsapp'],
+            'delivery_method' => $validated['delivery_method'],
+            'delivery_address' => $validated['delivery_address'] ?? null,
+            'payment_method' => $validated['payment_method'],
+            'total' => $total,
+        ]);
 
-                if ($product->stock_quantity < $item['quantity']) {
-                    return response()->json([
-                        'success' => false,
-                        'message' => "Stock insuficiente para '{$product->name}': disponibles {$product->stock_quantity}.",
-                    ], 422);
-                }
+        foreach ($validated['items'] as $item) {
+            $order->items()->create([
+                'product_id' => $item['product_id'],
+                'quantity' => $item['quantity'],
+                'price' => $item['price'],
+            ]);
+        }
 
-                $product->decrement('stock_quantity', $item['quantity']);
-                $decremented[] = [
-                    'product_id' => $product->id,
-                    'name' => $product->name,
-                    'remaining' => $product->fresh()->stock_quantity,
-                ];
-            }
-
-            return $decremented;
-        });
-
-        return response()->json(['success' => true, 'decremented' => $result]);
+        return response()->json(['success' => true, 'order_id' => $order->id]);
     }
 }

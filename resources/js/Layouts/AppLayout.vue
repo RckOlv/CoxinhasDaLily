@@ -87,6 +87,14 @@ onBeforeUnmount(() => {
           >
             Eventos
           </Link>
+          <Link
+            v-if="isAdmin"
+            href="/admin/pedidos"
+            class="px-4 py-2 rounded-xl text-sm font-semibold transition-colors"
+            :class="$page.url === '/admin/pedidos' ? 'bg-primary/15 text-secondary' : 'text-stone-400 hover:text-secondary hover:bg-primary/5'"
+          >
+            Pedidos
+          </Link>
         </nav>
 
         <!-- Derecha: Carrito -->

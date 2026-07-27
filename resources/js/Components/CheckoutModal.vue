@@ -46,7 +46,7 @@ function formatPrice(value) {
 
 function buildWhatsAppMessage() {
   const lines = [
-    '¡Hola Lily! 🙋‍♀️ Quiero hacer un pedido en *Coxinhas da Lily* 🇧🇷',
+    '¡Hola Lily! 🙋‍♀️ Quiero hacer un pedido en *Coxinhas da Lily* 🇦🇷🇧🇷',
     '',
     '📦 *Mi pedido:*',
   ]
@@ -81,15 +81,22 @@ async function confirm() {
 
   sending.value = true
 
+  // Crear pedido en BD
   try {
-    await axios.post('/api/checkout/decrement-stock', {
+    await axios.post('/api/checkout', {
+      client_name: form.value.name,
+      client_whatsapp: 'sin número',
+      delivery_method: form.value.delivery_method,
+      delivery_address: form.value.address || null,
+      payment_method: form.value.payment_method,
       items: items.value.map((item) => ({
         product_id: item.product_id,
         quantity: item.quantity,
+        price: item.price,
       })),
     })
   } catch {
-    // Silencioso: el descuento es simulado, no bloqueamos el pedido
+    // Si falla, igual abrimos WhatsApp
   }
 
   const text = buildWhatsAppMessage()

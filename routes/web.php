@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AdminCategoryController;
 use App\Http\Controllers\AdminEventController;
+use App\Http\Controllers\AdminOrderController;
 use App\Http\Controllers\AdminProductController;
 use App\Http\Controllers\CatalogController;
 use App\Http\Controllers\EventFormController;
@@ -22,6 +23,7 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     Route::post('/productos', [AdminProductController::class, 'store'])->name('admin.products.store');
     Route::put('/productos/{product}', [AdminProductController::class, 'update'])->name('admin.products.update');
     Route::delete('/productos/{product}', [AdminProductController::class, 'destroy'])->name('admin.products.destroy');
+    Route::put('/productos/{product}/stock', [AdminProductController::class, 'updateStock'])->name('admin.products.stock');
 
     Route::get('/categorias', [AdminCategoryController::class, 'index'])->name('admin.categories');
     Route::post('/categorias', [AdminCategoryController::class, 'store'])->name('admin.categories.store');
@@ -31,6 +33,9 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     Route::get('/eventos', [AdminEventController::class, 'index'])->name('admin.events');
     Route::put('/eventos/{event}', [AdminEventController::class, 'update'])->name('admin.events.update');
     Route::put('/eventos/{event}/productos', [AdminEventController::class, 'updateProductQuantities'])->name('admin.events.products');
+
+    Route::get('/pedidos', [AdminOrderController::class, 'index'])->name('admin.orders');
+    Route::put('/pedidos/{order}', [AdminOrderController::class, 'update'])->name('admin.orders.update');
 });
 
 require __DIR__.'/auth.php';
