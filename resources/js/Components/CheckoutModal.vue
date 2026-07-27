@@ -16,6 +16,7 @@ const { items, total, clearCart } = useCart()
 
 const form = ref({
   name: '',
+  phone: '',
   address: '',
   delivery_method: 'pickup',
   payment_method: 'efectivo',
@@ -32,6 +33,7 @@ const sending = ref(false)
 
 const isValid = computed(() => {
   if (!form.value.name.trim()) return false
+  if (!form.value.phone.trim()) return false
   if (form.value.delivery_method === 'envio' && !form.value.address.trim()) return false
   return true
 })
@@ -68,6 +70,7 @@ function buildWhatsAppMessage() {
 
   const payLabel = paymentMethods.find((p) => p.value === form.value.payment_method)?.label
   lines.push(`💳 Pago: ${payLabel}`)
+  lines.push(`📱 WhatsApp: ${form.value.phone}`)
   lines.push(`👤 A nombre de: ${form.value.name}`)
 
   return lines.join('\n')
@@ -85,7 +88,7 @@ async function confirm() {
   try {
     await axios.post('/api/checkout', {
       client_name: form.value.name,
-      client_whatsapp: 'sin número',
+      client_whatsapp: form.value.phone,
       delivery_method: form.value.delivery_method,
       delivery_address: form.value.address || null,
       payment_method: form.value.payment_method,
@@ -163,6 +166,22 @@ async function confirm() {
                 :class="showErrors && !form.name.trim() ? 'border-red-300' : 'border-primary/15'"
               />
               <p v-if="showErrors && !form.name.trim()" class="text-xs text-red-400 mt-1">Ingresá tu nombre</p>
+            </div>
+
+            <!-- Teléfono -->
+            <div>
+              <label class="block text-xs font-semibold text-secondary/60 mb-1.5 uppercase tracking-wide">Tu WhatsApp</label>
+              <input
+                v-model="form.phone"
+                type="tel"
+                placeholder="Ej: 3758123456"
+                class="w-full px-4 py-3 rounded-xl bg-white border-2 text-sm text-secondary placeholder-stone-300
+                       transition-colors outline-none
+                       focus:border-primary focus:shadow-[0_0_0_3px_rgba(234,179,8,0.15)]
+                       invalid:border-red-400"
+                :class="showErrors && !form.phone.trim() ? 'border-red-300' : 'border-primary/15'"
+              />
+              <p v-if="showErrors && !form.phone.trim()" class="text-xs text-red-400 mt-1">Ingresá tu número de WhatsApp</p>
             </div>
 
             <!-- Método de entrega -->
