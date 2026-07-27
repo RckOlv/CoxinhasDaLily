@@ -3,15 +3,12 @@ import { ref, onMounted, onBeforeUnmount } from 'vue'
 import { Link, usePage } from '@inertiajs/vue3'
 import AppLayout from '@/Layouts/AppLayout.vue'
 
-const { whatsapp_number } = usePage().props
+const { whatsapp_number, gallery_images } = usePage().props
 
-const galleryImages = [
-  { src: '/img/bolsacoxinhaspollo.jpg', alt: 'Bolsa de coxinhas de pollo' },
-  { src: '/img/fuentecoxinhas.jpg', alt: 'Fuente de coxinhas servidas' },
-  { src: '/img/bandejarissolis.jpg', alt: 'Bandeja de rissois' },
-  { src: '/img/tortasalada.jpg', alt: 'Torta salada artesanal' },
-  { src: '/img/mesasaladaevento.jpg', alt: 'Mesa preparada para evento' },
-]
+const galleryImages = gallery_images.map(img => ({
+  src: '/storage/' + img.image_path,
+  alt: img.alt || 'Foto de galería',
+}))
 
 const carouselImages = galleryImages.map((img) => img.src)
 const currentSlide = ref(0)

@@ -151,7 +151,7 @@ function submit() {
               v-model="form.client_whatsapp"
               type="text"
               required
-              placeholder="Ej: 3758123456"
+              placeholder="Ej: +54 9 11 1234-5678"
               class="w-full px-4 py-3 rounded-xl bg-cream border-2 text-sm text-secondary placeholder-stone-300
                      transition-colors outline-none focus:border-primary focus:shadow-[0_0_0_3px_rgba(234,179,8,0.15)]"
               :class="errors.client_whatsapp ? 'border-red-300' : 'border-primary/15'"

@@ -2,15 +2,23 @@
 
 use App\Http\Controllers\AdminCategoryController;
 use App\Http\Controllers\AdminEventController;
+use App\Http\Controllers\AdminGalleryController;
 use App\Http\Controllers\AdminOrderController;
 use App\Http\Controllers\AdminProductController;
 use App\Http\Controllers\CatalogController;
 use App\Http\Controllers\EventFormController;
+use App\Http\Controllers\PushController;
+use App\Models\GalleryImage;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 Route::get('/', function () {
-    return Inertia::render('Home');
+    $gallery_images = GalleryImage::where('is_active', true)
+        ->orderBy('sort_order')
+        ->orderBy('id')
+        ->get();
+
+    return Inertia::render('Home', compact('gallery_images'));
 })->name('home');
 
 Route::get('/productos', [CatalogController::class, 'index'])->name('catalog.index');
@@ -36,6 +44,17 @@ Route::prefix('admin')->middleware('auth')->group(function () {
 
     Route::get('/pedidos', [AdminOrderController::class, 'index'])->name('admin.orders');
     Route::put('/pedidos/{order}', [AdminOrderController::class, 'update'])->name('admin.orders.update');
+
+    Route::get('/galeria', [AdminGalleryController::class, 'index'])->name('admin.gallery');
+    Route::post('/galeria', [AdminGalleryController::class, 'store'])->name('admin.gallery.store');
+    Route::put('/galeria/{image}', [AdminGalleryController::class, 'update'])->name('admin.gallery.update');
+    Route::delete('/galeria/{image}', [AdminGalleryController::class, 'destroy'])->name('admin.gallery.destroy');
+
+    Route::get('/push/status', [PushController::class, 'status'])->name('admin.push.status');
+    Route::post('/push/send', [PushController::class, 'send'])->name('admin.push.send');
 });
+
+Route::post('/api/push/subscribe', [PushController::class, 'subscribe'])->name('push.subscribe');
+Route::post('/api/push/unsubscribe', [PushController::class, 'unsubscribe'])->name('push.unsubscribe');
 
 require __DIR__.'/auth.php';

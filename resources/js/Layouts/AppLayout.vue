@@ -3,6 +3,7 @@ import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import { Link, usePage } from '@inertiajs/vue3'
 import { useCart } from '@/Composables/useCart'
 import CartOffcanvas from '@/Components/CartOffcanvas.vue'
+import PushSubscribe from '@/Components/PushSubscribe.vue'
 
 const { itemCount } = useCart()
 const showCart = ref(false)
@@ -299,6 +300,18 @@ onBeforeUnmount(() => {
           Pedidos
         </Link>
         <Link
+          href="/admin/galeria"
+          class="flex flex-col items-center gap-0.5 px-2 py-1 text-xs font-medium transition-colors"
+          :class="$page.url.startsWith('/admin/galeria') ? 'text-primary' : 'text-white/50 hover:text-white'"
+        >
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+            <circle cx="8.5" cy="8.5" r="1.5" />
+            <polyline points="21 15 16 10 5 21" />
+          </svg>
+          Galería
+        </Link>
+        <Link
           href="/"
           class="flex flex-col items-center gap-0.5 px-3 py-1 text-xs font-medium transition-colors text-white/50 hover:text-white"
         >
@@ -393,5 +406,8 @@ onBeforeUnmount(() => {
 
     <!-- Cart Offcanvas -->
     <CartOffcanvas :open="showCart" @close="showCart = false" />
+
+    <!-- Push Notifications -->
+    <PushSubscribe />
   </div>
 </template>

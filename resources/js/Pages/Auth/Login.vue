@@ -116,13 +116,17 @@ const submit = () => {
       </form>
 
       <div class="mt-4 text-center">
-        <Link
-          v-if="canResetPassword"
-          :href="route('password.request')"
-          class="text-xs text-secondary/40 hover:text-primary transition-colors"
-        >
+        <p class="text-xs text-secondary/40">
           ¿Olvidaste tu contraseña?
-        </Link>
+          <a
+            :href="`https://wa.me/5493755550471?text=Hola%20Ricky%2C%20necesito%20cambiar%20mi%20contrase%C3%B1a%20del%20panel`"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="text-primary hover:text-primary-dark transition-colors font-medium"
+          >
+            Contactate conmigo
+          </a>
+        </p>
       </div>
     </div>
 
