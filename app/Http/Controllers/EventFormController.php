@@ -69,17 +69,17 @@ class EventFormController extends Controller
             return "- {$p->name}";
         })->implode("\n");
 
-        $message = "Hola Lily! Quiero solicitar un evento:\n\n"
-            . "*Cliente:* {$event->client_name}\n"
-            . "*WhatsApp:* {$event->client_whatsapp}\n"
-            . "*Fecha:* {$date}\n"
-            . "*Horario de retiro:* {$event->pickup_time}\n"
-            . "*Cantidad de personas:* {$event->quantity}\n"
-            . "*Tipo de evento:* {$event->event_type}\n"
-            . "*Color:* {$event->color}\n"
-            . ($event->notes ? "*Observaciones:* {$event->notes}\n" : "")
-            . "\n*Productos:*\n{$productsList}\n\n"
-            . "Quedo a la espera del presupuesto!";
+        $message = "¡Hola Lily! 🎉 Quiero solicitar un evento:\n\n"
+            . "👤 *Cliente:* {$event->client_name}\n"
+            . "📱 *WhatsApp:* {$event->client_whatsapp}\n"
+            . "📅 *Fecha:* {$date}\n"
+            . "🕐 *Horario de retiro:* {$event->pickup_time}\n"
+            . "👥 *Cantidad de personas:* {$event->quantity}\n"
+            . "🎊 *Tipo de evento:* {$event->event_type}\n"
+            . "🎨 *Color:* {$event->color}\n"
+            . ($event->notes ? "📝 *Observaciones:* {$event->notes}\n" : "")
+            . "\n🛍️ *Productos:*\n{$productsList}\n\n"
+            . "Quedo a la espera del presupuesto! 😊";
 
         return "https://wa.me/{$phone}?text=" . urlencode($message);
     }

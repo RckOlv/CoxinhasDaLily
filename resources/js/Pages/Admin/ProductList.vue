@@ -35,7 +35,7 @@ function formatPrice(value) {
   return new Intl.NumberFormat('es-AR', {
     style: 'currency',
     currency: 'ARS',
-    minimumFractionDigits: 0,
+    minimumFractionDigits: 2,
   }).format(value)
 }
 
@@ -411,6 +411,7 @@ async function destroy() {
                     type="number"
                     required
                     min="0"
+                    step="0.01"
                     class="w-full px-4 py-2.5 rounded-xl bg-white border border-primary/10 text-sm text-secondary
                            placeholder:text-secondary/30 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/30
                            transition-all tabular-nums"

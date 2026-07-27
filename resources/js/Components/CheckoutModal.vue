@@ -40,35 +40,35 @@ function formatPrice(value) {
   return new Intl.NumberFormat('es-AR', {
     style: 'currency',
     currency: 'ARS',
-    minimumFractionDigits: 0,
+    minimumFractionDigits: 2,
   }).format(value)
 }
 
 function buildWhatsAppMessage() {
   const lines = [
-    '¡Hola! Quiero hacer un pedido en *Coxinhas da Lily*:',
+    '¡Hola Lily! 🙋‍♀️ Quiero hacer un pedido en *Coxinhas da Lily* 🇧🇷',
     '',
+    '📦 *Mi pedido:*',
   ]
 
   items.value.forEach((item) => {
-    lines.push(`• ${item.quantity}x ${item.name} - ${formatPrice(item.price * item.quantity)}`)
+    lines.push(`  • ${item.quantity}x ${item.name} — ${formatPrice(item.price * item.quantity)}`)
   })
 
   lines.push('')
-  lines.push(`*Total: ${formatPrice(total.value)}*`)
+  lines.push(`💰 *Total: ${formatPrice(total.value)}*`)
   lines.push('')
 
   if (form.value.delivery_method === 'pickup') {
-    lines.push('- Retiro en domicilio de Lily')
+    lines.push('🏠 Retiro en tu domicilio')
   } else {
-    lines.push(`- Envio a: ${form.value.address}`)
-    lines.push('(El cliente coordina el traslado)')
+    lines.push(`🚚 Envío a: ${form.value.address}`)
+    lines.push('   (Coordinar traslado)')
   }
 
   const payLabel = paymentMethods.find((p) => p.value === form.value.payment_method)?.label
-  lines.push(`- Pago: ${payLabel}`)
-
-  lines.push(`- A nombre de: ${form.value.name}`)
+  lines.push(`💳 Pago: ${payLabel}`)
+  lines.push(`👤 A nombre de: ${form.value.name}`)
 
   return lines.join('\n')
 }
