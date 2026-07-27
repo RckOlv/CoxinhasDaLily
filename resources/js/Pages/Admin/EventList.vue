@@ -116,7 +116,9 @@ function saveProductQuantities(event) {
 }
 
 function formatDate(date) {
-  return new Date(date).toLocaleDateString('es-AR', {
+  const parts = date.split('T')[0].split('-')
+  const d = new Date(parts[0], parts[1] - 1, parts[2])
+  return d.toLocaleDateString('es-AR', {
     day: 'numeric',
     month: 'long',
     year: 'numeric',
