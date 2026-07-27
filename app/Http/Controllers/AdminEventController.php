@@ -31,4 +31,21 @@ class AdminEventController extends Controller
 
         return redirect()->back();
     }
+
+    public function updateProductQuantities(Request $request, Event $event)
+    {
+        $validated = $request->validate([
+            'products' => 'required|array',
+            'products.*.id' => 'required|exists:products,id',
+            'products.*.quantity' => 'required|integer|min:0',
+        ]);
+
+        foreach ($validated['products'] as $product) {
+            $event->products()->updateExistingPivot($product['id'], [
+                'quantity' => $product['quantity'],
+            ]);
+        }
+
+        return redirect()->back();
+    }
 }

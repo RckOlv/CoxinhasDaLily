@@ -27,22 +27,12 @@ function toggleProduct(product) {
   if (idx >= 0) {
     form.value.products.splice(idx, 1)
   } else {
-    form.value.products.push({ id: product.id, name: product.name, price: product.price, quantity: 1 })
+    form.value.products.push({ id: product.id })
   }
 }
 
 function isSelected(productId) {
   return form.value.products.some(p => p.id === productId)
-}
-
-function getProductQty(productId) {
-  const p = form.value.products.find(p => p.id === productId)
-  return p ? p.quantity : 1
-}
-
-function updateProductQty(productId, qty) {
-  const p = form.value.products.find(p => p.id === productId)
-  if (p) p.quantity = Math.max(1, parseInt(qty) || 1)
 }
 
 const groupedProducts = computed(() => {
@@ -197,7 +187,7 @@ function todayStr() {
               v-model="form.color"
               type="text"
               required
-              placeholder="Ej: Rosa y dorado,Azul marino..."
+              placeholder="Ej: Rosa y dorado, Azul marino..."
               class="w-full px-4 py-3 rounded-xl bg-cream border-2 text-sm text-secondary placeholder-stone-300
                      transition-colors outline-none focus:border-primary focus:shadow-[0_0_0_3px_rgba(234,179,8,0.15)]"
               :class="errors.color ? 'border-red-300' : 'border-primary/15'"
@@ -224,7 +214,7 @@ function todayStr() {
             Elegí los productos
           </h2>
           <p class="text-secondary/50 text-xs mb-4">
-            Seleccioná lo que querés para tu evento
+            Seleccioná lo que querés para tu evento. Las cantidades las definimos después.
           </p>
 
           <div v-if="products.length === 0" class="text-center py-8 text-secondary/40 text-sm">
@@ -254,31 +244,14 @@ function todayStr() {
                     </svg>
                   </div>
 
+                  <!-- Foto miniatura -->
+                  <div v-if="product.image_path" class="shrink-0 w-10 h-10 rounded-lg overflow-hidden bg-cream">
+                    <img :src="product.image_path" :alt="product.name" loading="lazy" class="w-full h-full object-cover" />
+                  </div>
+
                   <!-- Info -->
                   <div class="flex-1 min-w-0">
                     <p class="text-sm font-semibold text-secondary truncate">{{ product.name }}</p>
-                    <p class="text-xs text-secondary/50">{{ product.category?.name }}</p>
-                  </div>
-
-                  <!-- Cantidad (solo si está seleccionado) -->
-                  <div v-if="isSelected(product.id)" class="flex items-center gap-2" @click.stop>
-                    <button
-                      type="button"
-                      @click="updateProductQty(product.id, getProductQty(product.id) - 1)"
-                      class="w-7 h-7 rounded-lg bg-secondary/10 flex items-center justify-center text-secondary hover:bg-secondary/20 transition-colors text-sm font-bold"
-                    >-</button>
-                    <input
-                      :value="getProductQty(product.id)"
-                      @input="updateProductQty(product.id, $event.target.value)"
-                      type="number"
-                      min="1"
-                      class="w-12 text-center text-sm font-semibold text-secondary bg-transparent border-none outline-none"
-                    />
-                    <button
-                      type="button"
-                      @click="updateProductQty(product.id, getProductQty(product.id) + 1)"
-                      class="w-7 h-7 rounded-lg bg-secondary/10 flex items-center justify-center text-secondary hover:bg-secondary/20 transition-colors text-sm font-bold"
-                    >+</button>
                   </div>
                 </div>
               </div>
@@ -288,21 +261,18 @@ function todayStr() {
           <p v-if="errors.products" class="text-red-500 text-xs mt-3">{{ errors.products }}</p>
         </div>
 
-        <!-- Resumen y enviar -->
+        <!-- Resumen simple -->
         <div v-if="selectedCount > 0" class="bg-white rounded-2xl border border-primary/10 p-5">
-          <h2 class="font-display font-bold text-base text-secondary mb-3">
-            Resumen ({{ selectedCount }} producto{{ selectedCount > 1 ? 's' : '' }})
+          <h2 class="font-display font-bold text-base text-secondary mb-2">
+            Elegiste {{ selectedCount }} producto{{ selectedCount > 1 ? 's' : '' }}
           </h2>
-          <div class="space-y-1.5 mb-4">
-            <div v-for="p in form.products" :key="p.id" class="flex justify-between text-sm">
-              <span class="text-secondary/70">{{ p.name }} x{{ p.quantity }}</span>
-              <span class="text-secondary font-semibold">${{ (p.price * p.quantity).toLocaleString('es-AR') }}</span>
-            </div>
-          </div>
-          <div class="border-t border-primary/10 pt-3 flex justify-between">
-            <span class="font-display font-bold text-secondary">Total</span>
-            <span class="font-display font-bold text-primary-dark text-lg">
-              ${{ form.products.reduce((s, p) => s + p.price * p.quantity, 0).toLocaleString('es-AR') }}
+          <div class="flex flex-wrap gap-2">
+            <span
+              v-for="p in form.products"
+              :key="p.id"
+              class="px-3 py-1 rounded-full bg-primary/10 text-xs font-semibold text-primary-dark"
+            >
+              {{ products.find(pr => pr.id === p.id)?.name }}
             </span>
           </div>
         </div>

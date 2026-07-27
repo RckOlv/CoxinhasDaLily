@@ -36,7 +36,6 @@ class EventFormController extends Controller
             'notes' => 'nullable|string',
             'products' => 'required|array|min:1',
             'products.*.id' => 'required|exists:products,id',
-            'products.*.quantity' => 'required|integer|min:1',
         ]);
 
         $event = Event::create([
@@ -51,7 +50,7 @@ class EventFormController extends Controller
         ]);
 
         foreach ($validated['products'] as $product) {
-            $event->products()->attach($product['id'], ['quantity' => $product['quantity']]);
+            $event->products()->attach($product['id'], ['quantity' => 0]);
         }
 
         $event->load('products');
@@ -67,7 +66,7 @@ class EventFormController extends Controller
         $date = $event->event_date->format('d/m/Y');
 
         $productsList = $event->products->map(function ($p) {
-            return "- {$p->name} (x{$p->pivot->quantity})";
+            return "- {$p->name}";
         })->implode("\n");
 
         $message = "Hola Lily! Quiero solicitar un evento:\n\n"

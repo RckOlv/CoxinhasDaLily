@@ -32,10 +32,19 @@ const eventTypes = {
 }
 
 const filter = ref('todos')
+const editingEvent = ref(null)
 
 const filteredEvents = computed(() => {
   if (filter.value === 'todos') return props.events
   return props.events.filter(e => e.status === filter.value)
+})
+
+const Toast = Swal.mixin({
+  toast: true,
+  position: 'top-end',
+  showConfirmButton: false,
+  timer: 2000,
+  timerProgressBar: true,
 })
 
 function updateStatus(event, newStatus) {
@@ -61,15 +70,48 @@ function updateStatus(event, newStatus) {
       }, {
         preserveScroll: true,
       })
-      Swal.fire({
-        toast: true,
-        position: 'top-end',
-        icon: 'success',
-        title: 'Evento actualizado',
-        showConfirmButton: false,
-        timer: 2000,
-      })
+      Toast.fire({ icon: 'success', title: 'Evento actualizado' })
     }
+  })
+}
+
+function getEventTotal(event) {
+  if (!event.products) return 0
+  return event.products.reduce((sum, p) => {
+    const qty = p.pivot?.quantity || 0
+    return sum + (qty * (p.price || 0))
+  }, 0)
+}
+
+function toggleEditProducts(event) {
+  if (editingEvent.value === event.id) {
+    editingEvent.value = null
+  } else {
+    editingEvent.value = event.id
+  }
+}
+
+function updateProductQty(event, productId, newQty) {
+  const product = event.products.find(p => p.id === productId)
+  if (product) {
+    product.pivot.quantity = Math.max(0, parseInt(newQty) || 0)
+  }
+}
+
+function saveProductQuantities(event) {
+  const products = event.products.map(p => ({
+    id: p.id,
+    quantity: p.pivot?.quantity || 0,
+  }))
+
+  router.put(route('admin.events.products', event.id), {
+    products,
+  }, {
+    preserveScroll: true,
+    onFinish: () => {
+      editingEvent.value = null
+      Toast.fire({ icon: 'success', title: 'Cantidades guardadas' })
+    },
   })
 }
 
@@ -78,13 +120,6 @@ function formatDate(date) {
     day: 'numeric',
     month: 'long',
     year: 'numeric',
-  })
-}
-
-function formatDateShort(date) {
-  return new Date(date).toLocaleDateString('es-AR', {
-    day: 'numeric',
-    month: 'short',
   })
 }
 </script>
@@ -131,7 +166,7 @@ function formatDateShort(date) {
             <line x1="8" y1="2" x2="8" y2="6" />
             <line x1="3" y1="10" x2="21" y2="10" />
           </svg>
-          <p class="text-sm">No hay eventos {{ filter !== 'todos' ? statusLabels[f] : '' }}</p>
+          <p class="text-sm">No hay eventos</p>
         </div>
 
         <div
@@ -181,8 +216,6 @@ function formatDateShort(date) {
                 <svg class="w-4 h-4 text-primary-dark shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
                   <circle cx="9" cy="7" r="4" />
-                  <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
-                  <path d="M16 3.13a4 4 0 0 1 0 7.75" />
                 </svg>
                 <span class="text-secondary/70">{{ event.quantity }} personas</span>
               </div>
@@ -194,21 +227,86 @@ function formatDateShort(date) {
               </div>
             </div>
 
-            <!-- Productos -->
-            <div v-if="event.products?.length" class="bg-cream rounded-xl p-3 mb-3">
-              <p class="text-xs font-semibold text-secondary/50 uppercase tracking-wide mb-1.5">Productos</p>
-              <div class="space-y-1">
-                <div v-for="product in event.products" :key="product.id" class="flex justify-between text-sm">
-                  <span class="text-secondary/70">{{ product.name }}</span>
-                  <span class="text-secondary font-semibold">x{{ product.pivot.quantity }}</span>
-                </div>
-              </div>
-            </div>
-
             <!-- Observaciones -->
             <div v-if="event.notes" class="bg-cream/50 rounded-xl p-3 mb-3">
               <p class="text-xs font-semibold text-secondary/50 uppercase tracking-wide mb-1">Observaciones</p>
               <p class="text-sm text-secondary/70">{{ event.notes }}</p>
+            </div>
+
+            <!-- Productos -->
+            <div v-if="event.products?.length" class="bg-cream rounded-xl p-3 mb-3">
+              <div class="flex items-center justify-between mb-2">
+                <p class="text-xs font-semibold text-secondary/50 uppercase tracking-wide">Productos</p>
+                <button
+                  @click="toggleEditProducts(event)"
+                  class="text-xs font-medium text-primary-dark hover:underline transition-colors"
+                >
+                  {{ editingEvent === event.id ? 'Cancelar' : 'Editar cantidades' }}
+                </button>
+              </div>
+
+              <!-- Vista normal -->
+              <div v-if="editingEvent !== event.id" class="space-y-1.5">
+                <div v-for="product in event.products" :key="product.id" class="flex justify-between text-sm">
+                  <span class="text-secondary/70">{{ product.name }}</span>
+                  <span class="font-semibold" :class="product.pivot.quantity > 0 ? 'text-secondary' : 'text-secondary/40'">
+                    {{ product.pivot.quantity > 0 ? `x${product.pivot.quantity}` : 'Sin cantidad' }}
+                  </span>
+                </div>
+              </div>
+
+              <!-- Vista editable -->
+              <div v-else class="space-y-2">
+                <div v-for="product in event.products" :key="product.id" class="flex items-center justify-between gap-2">
+                  <span class="text-sm text-secondary/70">{{ product.name }}</span>
+                  <div class="flex items-center gap-1">
+                    <button
+                      type="button"
+                      @click="updateProductQty(event, product.id, (product.pivot.quantity || 0) - 1)"
+                      class="w-7 h-7 rounded-lg bg-white border border-primary/10 flex items-center justify-center text-secondary hover:bg-primary/10 transition-colors text-sm font-bold"
+                    >-</button>
+                    <input
+                      :value="product.pivot.quantity || 0"
+                      @input="updateProductQty(event, product.id, $event.target.value)"
+                      type="number"
+                      min="0"
+                      class="w-14 text-center text-sm font-semibold text-secondary bg-white border border-primary/10 rounded-lg py-1 outline-none focus:ring-2 focus:ring-primary/30"
+                    />
+                    <button
+                      type="button"
+                      @click="updateProductQty(event, product.id, (product.pivot.quantity || 0) + 1)"
+                      class="w-7 h-7 rounded-lg bg-white border border-primary/10 flex items-center justify-center text-secondary hover:bg-primary/10 transition-colors text-sm font-bold"
+                    >+</button>
+                  </div>
+                </div>
+
+                <!-- Estimativo -->
+                <div v-if="getEventTotal(event) > 0" class="border-t border-primary/10 pt-2 mt-2 flex justify-between text-sm">
+                  <span class="font-semibold text-secondary/60">Estimativo</span>
+                  <span class="font-display font-bold text-primary-dark">
+                    ${{ getEventTotal(event).toLocaleString('es-AR') }}
+                  </span>
+                </div>
+
+                <button
+                  @click="saveProductQuantities(event)"
+                  class="w-full py-2.5 rounded-xl bg-primary text-secondary text-xs font-display font-bold
+                         hover:bg-primary-dark hover:text-white active:scale-[0.98] transition-all mt-2"
+                >
+                  Guardar cantidades
+                </button>
+              </div>
+            </div>
+
+            <!-- Total guardado -->
+            <div v-if="event.total" class="bg-green-50 border border-green-200 rounded-xl p-3 mb-3">
+              <div class="flex justify-between text-sm">
+                <span class="font-semibold text-green-700">Presupuesto</span>
+                <span class="font-display font-bold text-green-700">
+                  ${{ parseFloat(event.total).toLocaleString('es-AR') }}
+                </span>
+              </div>
+              <p v-if="event.deposit_paid" class="text-xs text-green-600 mt-1">Seña pagada</p>
             </div>
 
             <!-- Acciones -->

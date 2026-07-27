@@ -30,6 +30,7 @@ Route::prefix('admin')->middleware('auth')->group(function () {
 
     Route::get('/eventos', [AdminEventController::class, 'index'])->name('admin.events');
     Route::put('/eventos/{event}', [AdminEventController::class, 'update'])->name('admin.events.update');
+    Route::put('/eventos/{event}/productos', [AdminEventController::class, 'updateProductQuantities'])->name('admin.events.products');
 });
 
 require __DIR__.'/auth.php';
