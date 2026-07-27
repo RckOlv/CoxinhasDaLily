@@ -7,10 +7,12 @@ import PushSubscribe from '@/Components/PushSubscribe.vue'
 
 const { itemCount } = useCart()
 const showCart = ref(false)
+const showAdminMore = ref(false)
 
 const page = usePage()
 const isHome = computed(() => page.url === '/')
 const isAdmin = computed(() => page.url.startsWith('/admin'))
+const isMoreActive = computed(() => page.url.startsWith('/admin/categorias') || page.url.startsWith('/admin/galeria'))
 
 const scrolled = ref(false)
 
@@ -18,8 +20,17 @@ function onScroll() {
   scrolled.value = window.scrollY > 50
 }
 
+function closeAdminMore() {
+  showAdminMore.value = false
+}
+
 onMounted(() => {
   window.addEventListener('scroll', onScroll, { passive: true })
+  window.addEventListener('click', (e) => {
+    if (showAdminMore.value && !e.target.closest('.relative')) {
+      showAdminMore.value = false
+    }
+  })
   onScroll()
 })
 
@@ -261,21 +272,6 @@ onBeforeUnmount(() => {
           Productos
         </Link>
         <Link
-          href="/admin/categorias"
-          class="flex flex-col items-center gap-0.5 px-3 py-1 text-xs font-medium transition-colors"
-          :class="$page.url.startsWith('/admin/categorias') ? 'text-primary' : 'text-white/50 hover:text-white'"
-        >
-          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="8" y1="6" x2="21" y2="6" />
-            <line x1="8" y1="12" x2="21" y2="12" />
-            <line x1="8" y1="18" x2="21" y2="18" />
-            <line x1="3" y1="6" x2="3.01" y2="6" />
-            <line x1="3" y1="12" x2="3.01" y2="12" />
-            <line x1="3" y1="18" x2="3.01" y2="18" />
-          </svg>
-          Categorías
-        </Link>
-        <Link
           href="/admin/eventos"
           class="flex flex-col items-center gap-0.5 px-3 py-1 text-xs font-medium transition-colors"
           :class="$page.url.startsWith('/admin/eventos') ? 'text-primary' : 'text-white/50 hover:text-white'"
@@ -300,18 +296,6 @@ onBeforeUnmount(() => {
           Pedidos
         </Link>
         <Link
-          href="/admin/galeria"
-          class="flex flex-col items-center gap-0.5 px-2 py-1 text-xs font-medium transition-colors"
-          :class="$page.url.startsWith('/admin/galeria') ? 'text-primary' : 'text-white/50 hover:text-white'"
-        >
-          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
-            <circle cx="8.5" cy="8.5" r="1.5" />
-            <polyline points="21 15 16 10 5 21" />
-          </svg>
-          Galería
-        </Link>
-        <Link
           href="/"
           class="flex flex-col items-center gap-0.5 px-3 py-1 text-xs font-medium transition-colors text-white/50 hover:text-white"
         >
@@ -322,6 +306,56 @@ onBeforeUnmount(() => {
           </svg>
           Tienda
         </Link>
+        <!-- Más (overflow) -->
+        <div class="relative">
+          <button
+            @click="showAdminMore = !showAdminMore"
+            class="flex flex-col items-center gap-0.5 px-3 py-1 text-xs font-medium transition-colors"
+            :class="showAdminMore ? 'text-primary' : (isMoreActive ? 'text-primary' : 'text-white/50 hover:text-white')"
+          >
+            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="1" /><circle cx="19" cy="12" r="1" /><circle cx="5" cy="12" r="1" />
+            </svg>
+            Más
+          </button>
+          <!-- Dropdown -->
+          <Transition
+            enter-active-class="transition-all duration-200"
+            leave-active-class="transition-all duration-150"
+            enter-from-class="opacity-0 translate-y-2 scale-95"
+            leave-to-class="opacity-0 translate-y-2 scale-95"
+          >
+            <div
+              v-if="showAdminMore"
+              class="absolute bottom-full right-0 mb-2 w-44 bg-white rounded-2xl shadow-2xl border border-primary/10 overflow-hidden"
+            >
+              <Link
+                href="/admin/categorias"
+                class="flex items-center gap-3 px-4 py-3 text-sm font-medium transition-colors"
+                :class="$page.url.startsWith('/admin/categorias') ? 'bg-primary/10 text-secondary' : 'text-secondary/70 hover:bg-cream'"
+                @click="showAdminMore = false"
+              >
+                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="8" y1="6" x2="21" y2="6" /><line x1="8" y1="12" x2="21" y2="12" /><line x1="8" y1="18" x2="21" y2="18" />
+                  <line x1="3" y1="6" x2="3.01" y2="6" /><line x1="3" y1="12" x2="3.01" y2="12" /><line x1="3" y1="18" x2="3.01" y2="18" />
+                </svg>
+                Categorías
+              </Link>
+              <Link
+                href="/admin/galeria"
+                class="flex items-center gap-3 px-4 py-3 text-sm font-medium transition-colors border-t border-primary/5"
+                :class="$page.url.startsWith('/admin/galeria') ? 'bg-primary/10 text-secondary' : 'text-secondary/70 hover:bg-cream'"
+                @click="showAdminMore = false"
+              >
+                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                  <circle cx="8.5" cy="8.5" r="1.5" /><polyline points="21 15 16 10 5 21" />
+                </svg>
+                Galería
+              </Link>
+            </div>
+          </Transition>
+        </div>
       </div>
     </nav>
 
