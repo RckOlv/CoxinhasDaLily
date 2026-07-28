@@ -65,7 +65,7 @@ function buildWhatsAppMessage() {
     lines.push('🏠 Retiro en tu domicilio')
   } else {
     lines.push(`🚚 Envío a: ${form.value.address}`)
-    lines.push('   (Coordinar traslado)')
+    lines.push('   (Coordinar traslado - no incluido en el precio)')
   }
 
   const payLabel = paymentMethods.find((p) => p.value === form.value.payment_method)?.label
@@ -248,7 +248,7 @@ async function confirm() {
                   </span>
                   <div>
                     <p class="text-sm font-semibold text-secondary">Envío</p>
-                    <p class="text-[10px] text-stone-400">Coordinás el traslado</p>
+                    <p class="text-[10px] text-stone-400">Coordiná el traslado (Uber, etc.)</p>
                   </div>
                 </label>
               </div>
@@ -269,7 +269,7 @@ async function confirm() {
               <p v-if="showErrors && form.delivery_method === 'envio' && !form.address.trim()" class="text-xs text-red-400 mt-1">
                 Ingresá tu dirección
               </p>
-              <p class="text-[11px] text-stone-400 mt-1.5">Coordiná el envío con un servicio de transporte (Uber, etc.)</p>
+              <p class="text-[11px] text-stone-400 mt-1.5">⚠️ Coordiná el traslado con un servicio de transporte (Uber, motocaixo, etc.). El envío no está incluido en el precio.</p>
             </div>
 
             <!-- Método de pago -->
