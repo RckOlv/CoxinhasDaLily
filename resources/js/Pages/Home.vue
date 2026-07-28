@@ -226,15 +226,18 @@ onBeforeUnmount(() => {
     <!-- Galería -->
     <section class="bg-cream-dark py-12 sm:py-16">
       <div class="max-w-5xl mx-auto px-5 sm:px-6 lg:px-8">
-        <h2 class="font-display font-bold text-xl sm:text-2xl text-secondary text-center mb-6 animate-fade-in-up">
+        <h2 class="font-display font-bold text-xl sm:text-2xl text-secondary text-center mb-2 animate-fade-in-up">
           Nuestros productos
         </h2>
+        <p v-if="galleryImages.length > 2" class="text-xs text-secondary/30 text-center mb-5 lg:hidden">
+          ← Deslizá para ver más →
+        </p>
         <div class="gallery-scroll">
           <div
             v-for="(img, i) in galleryImages"
             :key="img.src"
             class="rounded-2xl overflow-hidden border border-primary/10 shadow-sm cursor-pointer
-                   transition-all duration-300 hover:scale-105 hover:shadow-md hover:border-primary/25 animate-fade-in-up"
+                   transition-all duration-300 hover:shadow-md hover:border-primary/25 animate-fade-in-up"
             :style="{ animationDelay: `${i * 80}ms` }"
             @click="openImage(img)"
           >
