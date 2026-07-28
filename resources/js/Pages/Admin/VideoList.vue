@@ -15,9 +15,8 @@ const previewTitles = ref([])
 function onFileChange(e) {
   const files = Array.from(e.target.files)
   form.videos = files
-  form.titles = files.map(f => f.name.replace(/\.[^/.]+$/, '').replace(/[-_]/g, ' '))
+  previewTitles.value = files.map(f => f.name.replace(/\.[^/.]+$/, '').replace(/[-_]/g, ' '))
   previewUrls.value = files.map(f => URL.createObjectURL(f))
-  previewTitles.value = [...form.titles]
 }
 
 function updateTitle(index, value) {
@@ -28,6 +27,7 @@ function updateTitle(index, value) {
 function upload() {
   if (!form.videos.length) return
   uploading.value = true
+  form.titles = [...previewTitles.value]
   form.post(route('admin.videos.store'), {
     onFinish: () => {
       uploading.value = false
