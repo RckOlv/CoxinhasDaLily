@@ -368,13 +368,6 @@ function getColorName(hex) {
             @click="toggleExpand(event)"
             class="w-full p-3 flex items-center gap-3 text-left"
           >
-            <div class="flex items-center gap-1.5 shrink-0">
-              <div
-                class="w-2 h-2 rounded-full"
-                :style="{ backgroundColor: event.color || '#EAB308' }"
-              />
-              <span class="text-[10px] text-secondary/40">{{ getColorName(event.color) }}</span>
-            </div>
             <div class="flex-1 min-w-0">
               <div class="flex items-center gap-2 mb-0.5">
                 <h3 class="font-display font-bold text-sm text-secondary truncate">{{ event.client_name }}</h3>
@@ -389,6 +382,13 @@ function getColorName(hex) {
               <div class="flex items-center gap-3 text-xs mt-0.5">
                 <span class="font-semibold text-primary-dark">{{ formatPrice(eventEstimatedTotal(event)) }}</span>
                 <span v-if="event.notes" class="text-secondary/30 truncate max-w-[140px]">{{ event.notes }}</span>
+              </div>
+              <div v-if="event.color" class="flex items-center gap-1.5 mt-1">
+                <div
+                  class="w-4 h-4 rounded-md border border-primary/15"
+                  :style="{ backgroundColor: event.color }"
+                />
+                <span class="text-[10px] font-semibold text-secondary/50">Color: {{ getColorName(event.color) }}</span>
               </div>
             </div>
             <div class="flex items-center gap-2 shrink-0">
