@@ -27,11 +27,12 @@ const colorOptions = ref([])
 
 onMounted(async () => {
   try {
-    const res = await fetch('https://cdn.jsdelivr.net/gh/mechevarria/css-color-names@master/names.json')
+    const res = await fetch('https://csscolorsapi.com/api/colors')
     const data = await res.json()
-    colorOptions.value = Object.entries(data)
-      .map(([name, hex]) => ({ name: name.charAt(0).toUpperCase() + name.slice(1), hex }))
-      .sort((a, b) => a.name.localeCompare(b.name))
+    colorOptions.value = data.colors.map(c => ({
+      name: c.name.replace(/([A-Z])/g, ' $1').trim(),
+      hex: '#' + c.hex,
+    }))
   } catch {
     colorOptions.value = [
       { name: 'Dorado', hex: '#EAB308' },
