@@ -102,7 +102,7 @@ class EventFormController extends Controller
     private function buildWhatsAppUrl(Event $event): string
     {
         $phone = config('services.whatsapp');
-        $date = $event->event_date->format('d/m/Y');
+        $date = \Carbon\Carbon::parse($event->event_date)->format('d/m/Y');
 
         $productsList = $event->products->map(function ($p) {
             return "- {$p->name}";
