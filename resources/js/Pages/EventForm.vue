@@ -25,12 +25,49 @@ const sending = ref(false)
 
 const colorOptions = ref([])
 
+const colorTranslations = {
+  AliceBlue: 'Azul Alice', AntiqueWhite: 'Blanco Antiguo', Aqua: 'Aqua', Aquamarine: 'Aguamarina', Azure: 'Azul Cielo',
+  Beige: 'Beige', Bisque: 'Bizcocho', Black: 'Negro', BlanchedAlmond: 'Almendra', Blue: 'Azul', BlueViolet: 'Azul Violeta',
+  Brown: 'Marrón', BurlyWood: 'Madera', CadetBlue: 'Azul Cadete', Chartreuse: 'Chartreuse', Chocolate: 'Chocolate',
+  Coral: 'Coral', CornflowerBlue: 'Azul Aciano', Cornsilk: 'Seda de Maíz', Crimson: 'Carmesí', Cyan: 'Cian',
+  DarkBlue: 'Azul Oscuro', DarkCyan: 'Cian Oscuro', DarkGoldenRod: 'Dorado Oscuro', DarkGray: 'Gris Oscuro',
+  DarkGreen: 'Verde Oscuro', DarkKhaki: 'Caqui Oscuro', DarkMagenta: 'Magenta Oscuro', DarkOliveGreen: 'Verde Oliva Oscuro',
+  DarkOrange: 'Naranja Oscuro', DarkOrchid: 'Orquídea Oscura', DarkRed: 'Rojo Oscuro', DarkSalmon: 'Salmón Oscuro',
+  DarkSeaGreen: 'Verde Mar Oscuro', DarkSlateBlue: 'Azul Pizarra Oscuro', DarkSlateGray: 'Gris Pizarra Oscuro',
+  DarkTurquoise: 'Turquesa Oscuro', DarkViolet: 'Violeta Oscuro', DeepPink: 'Rosa Profundo', DeepSkyBlue: 'Azul Cielo Profundo',
+  DimGray: 'Gris Tenue', DodgerBlue: 'Azul Dodger', FireBrick: 'Ladrillo', FloralWhite: 'Blanco Floral',
+  ForestGreen: 'Verde Bosque', Fucsia: 'Fucsia', Gainsboro: 'Gainsboro', GhostWhite: 'Blanco Fantasma', Gold: 'Oro',
+  GoldenRod: 'Vara de Oro', Gray: 'Gris', Green: 'Verde', GreenYellow: 'Verde Amarillo', HoneyDew: 'Rocío de Miel',
+  HotPink: 'Rosa Intenso', IndianRed: 'Rojo Indio', Indigo: 'Índigo', Ivory: 'Marfil', Khaki: 'Caqui',
+  Lavender: 'Lavanda', LavenderBlush: 'Rubor Lavanda', LawnGreen: 'Verde Cesped', LemonChiffon: 'Limón',
+  LightBlue: 'Azul Claro', LightCoral: 'Coral Claro', LightCyan: 'Cian Claro', LightGoldenRodYellow: 'Dorado Claro',
+  LightGray: 'Gris Claro', LightGreen: 'Verde Claro', LightPink: 'Rosa Claro', LightSalmon: 'Salmón Claro',
+  LightSeaGreen: 'Verde Mar Claro', LightSkyBlue: 'Azul Cielo Claro', LightSlateGray: 'Gris Pizarra Claro',
+  LightSteelBlue: 'Azul Acero Claro', LightYellow: 'Amarillo Claro', Lime: 'Lima', LimeGreen: 'Verde Lima',
+  Linen: 'Lino', Magenta: 'Magenta', Maroon: 'Granate', MediumAquaMarine: 'Aguamarina Media',
+  MediumBlue: 'Azul Medio', MediumOrchid: 'Orquídea Media', MediumPurple: 'Púrpura Media',
+  MediumSeaGreen: 'Verde Mar Medio', MediumSlateBlue: 'Azul Pizarra Medio', MediumSpringGreen: 'Verde Primavera Medio',
+  MediumTurquoise: 'Turquesa Medio', MediumVioletRed: 'Rojo Violeta Medio', MidnightBlue: 'Azul Medianoche',
+  MintCream: 'Crema de Menta', MistyRose: 'Rosa Neblinoso', Moccasin: 'Mocasín', NavajoWhite: 'Blanco Navajo',
+  Navy: 'Azul Marino', OldLace: 'Encaje Viejo', Olive: 'Oliva', OliveDrab: 'Verde Oliva Opaco',
+  Orange: 'Naranja', OrangeRed: 'Rojo Naranja', Orchid: 'Orquídea', PaleGoldenRod: 'Dorado Pálido',
+  PaleGreen: 'Verde Pálido', PaleTurquoise: 'Turquesa Pálido', PaleVioletRed: 'Rojo Violeta Pálido',
+  PapayaWhip: 'Papaya', PeachPuff: 'Durazno', Peru: 'Perú', Pink: 'Rosa', Plum: 'Ciruela',
+  PowderBlue: 'Azul Polvo', Purple: 'Púrpura', RebeccaBlue: 'Azul Rebecca', RosyBrown: 'Marrón Rosado',
+  RoyalBlue: 'Azul Real', SaddleBrown: 'Marrón Montura', Salmon: 'Salmón', SandyBrown: 'Marrón Arenoso',
+  SeaGreen: 'Verde Mar', SeaShell: 'Concha de Mar', Sienna: 'Siena', SkyBlue: 'Azul Cielo',
+  SlateBlue: 'Azul Pizarra', SlateGray: 'Gris Pizarra', Snow: 'Nieve', SpringGreen: 'Verde Primavera',
+  SteelBlue: 'Azul Acero', Tan: 'Tan', Teal: 'Verde Azulado', Thistle: 'Cardo', Tomato: 'Tomate',
+  Turquoise: 'Turquesa', Violet: 'Violeta', Wheat: 'Trigo', White: 'Blanco', WhiteSmoke: 'Humo Blanco',
+  Yellow: 'Amarillo', YellowGreen: 'Verde Amarillo',
+}
+
 onMounted(async () => {
   try {
     const res = await fetch('https://www.csscolorsapi.com/api/colors')
     const data = await res.json()
     colorOptions.value = data.colors.map(c => ({
-      name: c.name.replace(/([A-Z])/g, ' $1').trim(),
+      name: colorTranslations[c.name] || c.name.replace(/([A-Z])/g, ' $1').trim(),
       hex: '#' + c.hex,
     }))
   } catch {
@@ -47,6 +84,18 @@ onMounted(async () => {
 const colorSearch = ref('')
 const showColorDropdown = ref(false)
 const colorInputRef = ref(null)
+const nativeColorRef = ref(null)
+
+function openNativePicker() {
+  nativeColorRef.value?.click()
+}
+
+function onNativeColor(e) {
+  const hex = e.target.value.toUpperCase()
+  form.value.color = hex
+  const match = colorOptions.value.find(c => c.hex.toUpperCase() === hex)
+  colorSearch.value = match ? match.name : hex
+}
 
 const filteredColors = computed(() => {
   if (!colorSearch.value) return colorOptions.value.slice(0, 20)
@@ -286,10 +335,21 @@ function submit() {
             <label class="block text-xs font-semibold text-secondary/60 mb-1.5 uppercase tracking-wide">Color del evento *</label>
             <div class="relative">
               <div class="flex items-center gap-2">
-                <div
-                  class="w-10 h-10 rounded-xl border-2 border-primary/15 shrink-0 transition-colors"
+                <button
+                  type="button"
+                  @click="openNativePicker"
+                  class="w-10 h-10 rounded-xl border-2 border-primary/15 shrink-0 transition-all active:scale-95 hover:shadow-md"
                   :style="{ backgroundColor: form.color }"
-                />
+                  title="Elegir color"
+                >
+                  <input
+                    ref="nativeColorRef"
+                    type="color"
+                    :value="form.color"
+                    @input="onNativeColor"
+                    class="sr-only"
+                  />
+                </button>
                 <input
                   ref="colorInputRef"
                   v-model="colorSearch"
