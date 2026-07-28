@@ -242,6 +242,28 @@ function timeAgo(date) {
   if (diff < 86400) return `hace ${Math.floor(diff / 3600)}h`
   return `hace ${Math.floor(diff / 86400)}d`
 }
+
+function getColorName(hex) {
+  if (!hex) return ''
+  const map = {
+    '#F472B6': 'Rosa', '#FBCFE8': 'Rosa claro', '#BE185D': 'Rosa viejo',
+    '#EF4444': 'Rojo', '#991B1B': 'Rojo oscuro', '#7F1D1D': 'Bordó',
+    '#F97316': 'Naranja', '#FDBA74': 'Durazno', '#EAB308': 'Dorado',
+    '#FACC15': 'Amarillo', '#22C55E': 'Verde', '#6EE7B7': 'Verde menta',
+    '#166534': 'Verde oscuro', '#65A30D': 'Oliva', '#14B8A6': 'Turquesa',
+    '#22D3EE': 'Aqua', '#93C5FD': 'Azul claro', '#3B82F6': 'Azul',
+    '#1E3A5F': 'Azul marino', '#7DD3FC': 'Celeste', '#A855F7': 'Morado',
+    '#C084FC': 'Lila', '#7C3AED': 'Violeta', '#DDD6FE': 'Lavanda',
+    '#D946EF': 'Fucsia', '#DB2777': 'Magenta', '#FFFFFF': 'Blanco',
+    '#E5E7EB': 'Gris claro', '#9CA3AF': 'Gris', '#C0C0C0': 'Plateado',
+    '#1C1917': 'Negro', '#78350F': 'Chocolate', '#F5F0E1': 'Beige',
+    '#FFFDF5': 'Crema', '#F5F5F4': 'Gris claro', '#000000': 'Negro',
+    '#FF0000': 'Rojo', '#00FF00': 'Verde', '#0000FF': 'Azul',
+    '#FFFF00': 'Amarillo', '#FF00FF': 'Fucsia', '#00FFFF': 'Aqua',
+  }
+  const upper = hex.toUpperCase()
+  return map[upper] || hex
+}
 </script>
 
 <template>
@@ -346,10 +368,13 @@ function timeAgo(date) {
             @click="toggleExpand(event)"
             class="w-full p-3 flex items-center gap-3 text-left"
           >
-            <div
-              class="w-2 h-2 rounded-full shrink-0"
-              :style="{ backgroundColor: event.color || '#EAB308' }"
-            />
+            <div class="flex items-center gap-1.5 shrink-0">
+              <div
+                class="w-2 h-2 rounded-full"
+                :style="{ backgroundColor: event.color || '#EAB308' }"
+              />
+              <span class="text-[10px] text-secondary/40">{{ getColorName(event.color) }}</span>
+            </div>
             <div class="flex-1 min-w-0">
               <div class="flex items-center gap-2 mb-0.5">
                 <h3 class="font-display font-bold text-sm text-secondary truncate">{{ event.client_name }}</h3>
