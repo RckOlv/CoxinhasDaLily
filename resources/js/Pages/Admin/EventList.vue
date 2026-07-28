@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, nextTick } from 'vue'
 import { Head, router, usePage } from '@inertiajs/vue3'
 import AppLayout from '@/Layouts/AppLayout.vue'
 import AdminHeader from '@/Components/AdminHeader.vue'
@@ -109,6 +109,11 @@ const selectedCalendarDate = ref(null)
 function selectCalendarDay(dayObj) {
   if (!dayObj || !dayObj.day) return
   selectedCalendarDate.value = selectedCalendarDate.value === dayObj.date ? null : dayObj.date
+  if (selectedCalendarDate.value) {
+    nextTick(() => {
+      document.getElementById('calendar-results')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    })
+  }
 }
 
 const calendarDayEvents = computed(() => {
@@ -423,7 +428,7 @@ function timeAgo(date) {
             <div
               v-for="(dayObj, i) in calendarDays"
               :key="i"
-              class="aspect-square flex flex-col items-center justify-center rounded-lg text-xs transition-all cursor-pointer relative"
+              class="flex flex-col items-center justify-center rounded-lg text-xs transition-all cursor-pointer relative h-9 sm:h-11"
               :class="{
                 'text-secondary/20': !dayObj.day,
                 'hover:bg-cream': dayObj.day && !dayObj.events?.length && !dayObj.isOccupied,
@@ -453,7 +458,7 @@ function timeAgo(date) {
         </div>
 
         <!-- Selected day events -->
-        <div v-if="selectedCalendarDate" class="mb-4">
+        <div v-if="selectedCalendarDate" id="calendar-results" class="mb-4 scroll-mt-4">
           <p class="text-xs font-semibold text-secondary/50 mb-2 px-1">
             {{ formatShortDate(selectedCalendarDate) }} — {{ calendarDayEvents.length }} evento{{ calendarDayEvents.length !== 1 ? 's' : '' }}
           </p>
