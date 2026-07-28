@@ -28,6 +28,9 @@ RUN composer install --no-dev --optimize-autoloader --no-interaction
 # Install JS deps and build assets
 RUN npm install && npm run build
 
+# PHP upload limits
+COPY php/uploads.ini /usr/local/etc/php/conf.d/uploads.ini
+
 # Nginx config (proxies to PHP-FPM on localhost:9000)
 COPY nginx.render.conf /etc/nginx/sites-available/default
 
