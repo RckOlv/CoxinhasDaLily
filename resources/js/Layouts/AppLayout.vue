@@ -12,7 +12,7 @@ const showAdminMore = ref(false)
 const page = usePage()
 const isHome = computed(() => page.url === '/')
 const isAdmin = computed(() => page.url.startsWith('/admin'))
-const isMoreActive = computed(() => page.url.startsWith('/admin/categorias') || page.url.startsWith('/admin/galeria'))
+const isMoreActive = computed(() => page.url.startsWith('/admin/categorias') || page.url.startsWith('/admin/galeria') || page.url.startsWith('/admin/videos'))
 
 const scrolled = ref(false)
 
@@ -352,6 +352,17 @@ onBeforeUnmount(() => {
                   <circle cx="8.5" cy="8.5" r="1.5" /><polyline points="21 15 16 10 5 21" />
                 </svg>
                 Galería
+              </Link>
+              <Link
+                href="/admin/videos"
+                class="flex items-center gap-3 px-4 py-3 text-sm font-medium transition-colors border-t border-primary/5"
+                :class="$page.url.startsWith('/admin/videos') ? 'bg-primary/10 text-secondary' : 'text-secondary/70 hover:bg-cream'"
+                @click="showAdminMore = false"
+              >
+                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polygon points="5 3 19 12 5 21 5 3" />
+                </svg>
+                Videos
               </Link>
               <Link
                 :href="route('logout')"

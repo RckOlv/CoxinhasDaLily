@@ -3,7 +3,7 @@ import { ref, onMounted, onBeforeUnmount } from 'vue'
 import { Link, usePage } from '@inertiajs/vue3'
 import AppLayout from '@/Layouts/AppLayout.vue'
 
-const { whatsapp_number, gallery_images } = usePage().props
+const { whatsapp_number, gallery_images, videos: dbVideos } = usePage().props
 
 const galleryImages = gallery_images.map(img => ({
   src: '/storage/' + img.image_path,
@@ -26,12 +26,10 @@ onBeforeUnmount(() => {
   clearInterval(slideTimer)
 })
 
-const videos = [
-  { src: '/videos/produccioncoxinhas.mp4', title: 'Coxinhas' },
-  { src: '/videos/produccionchurros.mp4', title: 'Churros' },
-  { src: '/videos/bandejaminipizzas.mp4', title: 'Mini Pizzas' },
-  { src: '/videos/masbandejasminipizzas.mp4', title: 'Bandejas' },
-]
+const videos = dbVideos.map(v => ({
+  src: '/storage/' + v.video_path,
+  title: v.title || 'Video',
+}))
 
 const playingVideos = ref({})
 const videoRefs = ref({})
@@ -169,15 +167,19 @@ onBeforeUnmount(() => {
         <h2 class="font-display font-bold text-xl sm:text-2xl text-white text-center mb-2 animate-fade-in-up">
           Detrás de escena
         </h2>
-        <p class="text-white/60 text-sm text-center mb-8 animate-fade-in-up delay-100">
+        <p class="text-white/60 text-sm text-center mb-1 animate-fade-in-up delay-100">
           Mirá cómo preparamos todo con amor
         </p>
-        <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 max-sm:flex max-sm:overflow-x-auto max-sm:snap-x max-sm:snap-mandatory max-sm:pb-4 max-sm:-mx-5 max-sm:px-5">
+        <p v-if="videos.length > 2" class="text-xs text-white/25 text-center mb-5 lg:hidden">
+          ← Deslizá para ver más →
+        </p>
+        <div class="flex gap-3 overflow-x-auto scroll-sm snap-x snap-mandatory pb-4 -mx-5 px-5 sm:mx-0 sm:px-0 sm:grid sm:grid-cols-2 lg:grid-cols-4 sm:snap-none">
           <div
             v-for="video in videos"
             :key="video.src"
             class="group rounded-2xl overflow-hidden bg-secondary-dark relative
-                   transition-all duration-300 hover:shadow-xl animate-fade-in-up max-sm:min-w-[80%] max-sm:snap-center"
+                   transition-all duration-300 hover:shadow-xl animate-fade-in-up
+                   shrink-0 w-[70%] sm:w-auto snap-center"
           >
             <video
               :ref="el => { videoRefs[video.src] = el }"

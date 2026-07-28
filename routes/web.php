@@ -5,10 +5,12 @@ use App\Http\Controllers\AdminEventController;
 use App\Http\Controllers\AdminGalleryController;
 use App\Http\Controllers\AdminOrderController;
 use App\Http\Controllers\AdminProductController;
+use App\Http\Controllers\AdminVideoController;
 use App\Http\Controllers\CatalogController;
 use App\Http\Controllers\EventFormController;
 use App\Http\Controllers\PushController;
 use App\Models\GalleryImage;
+use App\Models\Video;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -18,7 +20,12 @@ Route::get('/', function () {
         ->orderBy('id')
         ->get();
 
-    return Inertia::render('Home', compact('gallery_images'));
+    $videos = Video::where('is_active', true)
+        ->orderBy('sort_order')
+        ->orderBy('id')
+        ->get();
+
+    return Inertia::render('Home', compact('gallery_images', 'videos'));
 })->name('home');
 
 Route::get('/productos', [CatalogController::class, 'index'])->name('catalog.index');
@@ -49,6 +56,11 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     Route::post('/galeria', [AdminGalleryController::class, 'store'])->name('admin.gallery.store');
     Route::put('/galeria/{image}', [AdminGalleryController::class, 'update'])->name('admin.gallery.update');
     Route::delete('/galeria/{image}', [AdminGalleryController::class, 'destroy'])->name('admin.gallery.destroy');
+
+    Route::get('/videos', [AdminVideoController::class, 'index'])->name('admin.videos');
+    Route::post('/videos', [AdminVideoController::class, 'store'])->name('admin.videos.store');
+    Route::put('/videos/{video}', [AdminVideoController::class, 'update'])->name('admin.videos.update');
+    Route::delete('/videos/{video}', [AdminVideoController::class, 'destroy'])->name('admin.videos.destroy');
 
     Route::get('/push/status', [PushController::class, 'status'])->name('admin.push.status');
     Route::post('/push/send', [PushController::class, 'send'])->name('admin.push.send');
