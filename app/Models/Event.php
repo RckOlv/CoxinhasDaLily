@@ -22,7 +22,6 @@ class Event extends Model
     ];
 
     protected $casts = [
-        'event_date' => 'date',
         'quantity' => 'integer',
         'total' => 'decimal:2',
         'deposit_paid' => 'boolean',

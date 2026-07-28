@@ -14,8 +14,15 @@ class AdminEventController extends Controller
             ->orderBy('event_date', 'desc')
             ->get();
 
+        $occupiedDates = Event::where('status', '!=', 'cancelado')
+            ->pluck('event_date')
+            ->map(fn($d) => is_string($d) ? substr($d, 0, 10) : $d->format('Y-m-d'))
+            ->values()
+            ->all();
+
         return Inertia::render('Admin/EventList', [
             'events' => $events,
+            'occupiedDates' => $occupiedDates,
         ]);
     }
 
