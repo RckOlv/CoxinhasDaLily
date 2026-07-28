@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { Head, router } from '@inertiajs/vue3'
 import AppLayout from '@/Layouts/AppLayout.vue'
 
@@ -23,51 +23,34 @@ const form = ref({
 const errors = ref({})
 const sending = ref(false)
 
-const colorOptions = [
-  { name: 'Rosa', hex: '#F472B6' },
-  { name: 'Rosa claro', hex: '#FBCFE8' },
-  { name: 'Rosa viejo', hex: '#BE185D' },
-  { name: 'Rojo', hex: '#EF4444' },
-  { name: 'Rojo oscuro', hex: '#991B1B' },
-  { name: 'Bordó', hex: '#7F1D1D' },
-  { name: 'Naranja', hex: '#F97316' },
-  { name: 'Durazno', hex: '#FDBA74' },
-  { name: 'Dorado', hex: '#EAB308' },
-  { name: 'Amarillo', hex: '#FACC15' },
-  { name: 'Verde', hex: '#22C55E' },
-  { name: 'Verde menta', hex: '#6EE7B7' },
-  { name: 'Verde oscuro', hex: '#166534' },
-  { name: 'Oliva', hex: '#65A30D' },
-  { name: 'Turquesa', hex: '#14B8A6' },
-  { name: 'Aqua', hex: '#22D3EE' },
-  { name: 'Azul claro', hex: '#93C5FD' },
-  { name: 'Azul', hex: '#3B82F6' },
-  { name: 'Azul marino', hex: '#1E3A5F' },
-  { name: 'Celeste', hex: '#7DD3FC' },
-  { name: 'Morado', hex: '#A855F7' },
-  { name: 'Lila', hex: '#C084FC' },
-  { name: 'Violeta', hex: '#7C3AED' },
-  { name: 'Lavanda', hex: '#DDD6FE' },
-  { name: 'Fucsia', hex: '#D946EF' },
-  { name: 'Magenta', hex: '#DB2777' },
-  { name: 'Blanco', hex: '#FFFFFF' },
-  { name: 'Gris claro', hex: '#E5E7EB' },
-  { name: 'Gris', hex: '#9CA3AF' },
-  { name: 'Plateado', hex: '#C0C0C0' },
-  { name: 'Negro', hex: '#1C1917' },
-  { name: 'Chocolate', hex: '#78350F' },
-  { name: 'Beige', hex: '#F5F0E1' },
-  { name: 'Crema', hex: '#FFFDF5' },
-]
+const colorOptions = ref([])
 
-const colorSearch = ref(colorOptions.find(c => c.hex === form.value.color)?.name || '')
+onMounted(async () => {
+  try {
+    const res = await fetch('https://cdn.jsdelivr.net/gh/mechevarria/css-color-names@master/names.json')
+    const data = await res.json()
+    colorOptions.value = Object.entries(data)
+      .map(([name, hex]) => ({ name: name.charAt(0).toUpperCase() + name.slice(1), hex }))
+      .sort((a, b) => a.name.localeCompare(b.name))
+  } catch {
+    colorOptions.value = [
+      { name: 'Dorado', hex: '#EAB308' },
+      { name: 'Rosa', hex: '#F472B6' },
+      { name: 'Rojo', hex: '#EF4444' },
+      { name: 'Azul', hex: '#3B82F6' },
+      { name: 'Verde', hex: '#22C55E' },
+    ]
+  }
+})
+
+const colorSearch = ref('')
 const showColorDropdown = ref(false)
 const colorInputRef = ref(null)
 
 const filteredColors = computed(() => {
-  if (!colorSearch.value) return colorOptions
+  if (!colorSearch.value) return colorOptions.value.slice(0, 20)
   const q = colorSearch.value.toLowerCase()
-  return colorOptions.filter(c => c.name.toLowerCase().includes(q))
+  return colorOptions.value.filter(c => c.name.toLowerCase().includes(q))
 })
 
 function selectColor(color) {
@@ -78,10 +61,11 @@ function selectColor(color) {
 
 function onColorInput() {
   showColorDropdown.value = true
-  // Try to match typed text to a color
-  const match = colorOptions.find(c => c.name.toLowerCase() === colorSearch.value.toLowerCase())
+  const match = colorOptions.value.find(c => c.name.toLowerCase() === colorSearch.value.toLowerCase())
   if (match) {
     form.value.color = match.hex
+  } else if (/^#[0-9A-Fa-f]{6}$/.test(colorSearch.value) || /^#[0-9A-Fa-f]{3}$/.test(colorSearch.value)) {
+    form.value.color = colorSearch.value
   }
 }
 
@@ -90,8 +74,8 @@ function onColorBlur() {
 }
 
 const selectedColorName = computed(() => {
-  const c = colorOptions.find(o => o.hex === form.value.color)
-  return c ? c.name : colorSearch.value || ''
+  const c = colorOptions.value.find(o => o.hex === form.value.color)
+  return c ? c.name : form.value.color
 })
 
 function toggleProduct(product) {

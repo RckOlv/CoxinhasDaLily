@@ -104,48 +104,6 @@ class EventFormController extends Controller
         $phone = config('services.whatsapp');
         $date = \Carbon\Carbon::parse($event->event_date)->format('d/m/Y');
 
-        $colorNames = [
-            '#F472B6' => 'Rosa',
-            '#FBCFE8' => 'Rosa claro',
-            '#BE185D' => 'Rosa viejo',
-            '#EF4444' => 'Rojo',
-            '#991B1B' => 'Rojo oscuro',
-            '#7F1D1D' => 'Bordó',
-            '#F97316' => 'Naranja',
-            '#FDBA74' => 'Durazno',
-            '#EAB308' => 'Dorado',
-            '#FACC15' => 'Amarillo',
-            '#22C55E' => 'Verde',
-            '#6EE7B7' => 'Verde menta',
-            '#166534' => 'Verde oscuro',
-            '#65A30D' => 'Oliva',
-            '#14B8A6' => 'Turquesa',
-            '#22D3EE' => 'Aqua',
-            '#93C5FD' => 'Azul claro',
-            '#3B82F6' => 'Azul',
-            '#1E3A5F' => 'Azul marino',
-            '#7DD3FC' => 'Celeste',
-            '#A855F7' => 'Morado',
-            '#C084FC' => 'Lila',
-            '#7C3AED' => 'Violeta',
-            '#DDD6FE' => 'Lavanda',
-            '#D946EF' => 'Fucsia',
-            '#DB2777' => 'Magenta',
-            '#FFFFFF' => 'Blanco',
-            '#E5E7EB' => 'Gris claro',
-            '#9CA3AF' => 'Gris',
-            '#C0C0C0' => 'Plateado',
-            '#1C1917' => 'Negro',
-            '#78350F' => 'Chocolate',
-            '#F5F0E1' => 'Beige',
-            '#FFFDF5' => 'Crema',
-        ];
-        $colorName = $colorNames[$event->color] ?? $event->color;
-
-        $productsList = $event->products->map(function ($p) {
-            return "- {$p->name}";
-        })->implode("\n");
-
         $message = "¡Hola Lily! 🎉 Quiero solicitar un evento:\n\n"
             . "👤 *Cliente:* {$event->client_name}\n"
             . "📱 *WhatsApp:* {$event->client_whatsapp}\n"
@@ -153,7 +111,7 @@ class EventFormController extends Controller
             . "🕐 *Horario de retiro:* {$event->pickup_time}\n"
             . "👥 *Cantidad de personas:* {$event->quantity}\n"
             . "🎊 *Tipo de evento:* {$event->event_type}\n"
-            . "🎨 *Color:* {$colorName}\n"
+            . "🎨 *Color:* {$event->color}\n"
             . ($event->notes ? "📝 *Observaciones:* {$event->notes}\n" : "")
             . "\n🛍️ *Productos:*\n{$productsList}\n\n"
             . "Quedo a la espera del presupuesto! 😊";
