@@ -24,17 +24,75 @@ const errors = ref({})
 const sending = ref(false)
 
 const colorOptions = [
-  { name: 'Dorado', hex: '#EAB308' },
   { name: 'Rosa', hex: '#F472B6' },
+  { name: 'Rosa claro', hex: '#FBCFE8' },
+  { name: 'Rosa viejo', hex: '#BE185D' },
   { name: 'Rojo', hex: '#EF4444' },
-  { name: 'Azul', hex: '#3B82F6' },
-  { name: 'Verde', hex: '#22C55E' },
-  { name: 'Morado', hex: '#A855F7' },
+  { name: 'Rojo oscuro', hex: '#991B1B' },
+  { name: 'Bordó', hex: '#7F1D1D' },
   { name: 'Naranja', hex: '#F97316' },
+  { name: 'Durazno', hex: '#FDBA74' },
+  { name: 'Dorado', hex: '#EAB308' },
+  { name: 'Amarillo', hex: '#FACC15' },
+  { name: 'Verde', hex: '#22C55E' },
+  { name: 'Verde menta', hex: '#6EE7B7' },
+  { name: 'Verde oscuro', hex: '#166534' },
+  { name: 'Oliva', hex: '#65A30D' },
   { name: 'Turquesa', hex: '#14B8A6' },
-  { name: 'Blanco', hex: '#F5F5F4' },
+  { name: 'Aqua', hex: '#22D3EE' },
+  { name: 'Azul claro', hex: '#93C5FD' },
+  { name: 'Azul', hex: '#3B82F6' },
+  { name: 'Azul marino', hex: '#1E3A5F' },
+  { name: 'Celeste', hex: '#7DD3FC' },
+  { name: 'Morado', hex: '#A855F7' },
+  { name: 'Lila', hex: '#C084FC' },
+  { name: 'Violeta', hex: '#7C3AED' },
+  { name: 'Lavanda', hex: '#DDD6FE' },
+  { name: 'Fucsia', hex: '#D946EF' },
+  { name: 'Magenta', hex: '#DB2777' },
+  { name: 'Blanco', hex: '#FFFFFF' },
+  { name: 'Gris claro', hex: '#E5E7EB' },
+  { name: 'Gris', hex: '#9CA3AF' },
+  { name: 'Plateado', hex: '#C0C0C0' },
   { name: 'Negro', hex: '#1C1917' },
+  { name: 'Chocolate', hex: '#78350F' },
+  { name: 'Beige', hex: '#F5F0E1' },
+  { name: 'Crema', hex: '#FFFDF5' },
 ]
+
+const colorSearch = ref(colorOptions.find(c => c.hex === form.value.color)?.name || '')
+const showColorDropdown = ref(false)
+const colorInputRef = ref(null)
+
+const filteredColors = computed(() => {
+  if (!colorSearch.value) return colorOptions
+  const q = colorSearch.value.toLowerCase()
+  return colorOptions.filter(c => c.name.toLowerCase().includes(q))
+})
+
+function selectColor(color) {
+  form.value.color = color.hex
+  colorSearch.value = color.name
+  showColorDropdown.value = false
+}
+
+function onColorInput() {
+  showColorDropdown.value = true
+  // Try to match typed text to a color
+  const match = colorOptions.find(c => c.name.toLowerCase() === colorSearch.value.toLowerCase())
+  if (match) {
+    form.value.color = match.hex
+  }
+}
+
+function onColorBlur() {
+  setTimeout(() => { showColorDropdown.value = false }, 200)
+}
+
+const selectedColorName = computed(() => {
+  const c = colorOptions.find(o => o.hex === form.value.color)
+  return c ? c.name : colorSearch.value || ''
+})
 
 function toggleProduct(product) {
   const idx = form.value.products.findIndex(p => p.id === product.id)
@@ -241,24 +299,50 @@ function submit() {
           <!-- Color -->
           <div>
             <label class="block text-xs font-semibold text-secondary/60 mb-1.5 uppercase tracking-wide">Color del evento *</label>
-            <div class="grid grid-cols-5 gap-2">
-              <button
-                v-for="c in colorOptions"
-                :key="c.hex"
-                type="button"
-                @click="form.color = c.hex"
-                class="relative w-full aspect-square rounded-xl border-2 transition-all active:scale-95"
-                :class="form.color === c.hex ? 'border-secondary shadow-md scale-105' : 'border-primary/10'"
-                :style="{ backgroundColor: c.hex }"
+            <div class="relative">
+              <div class="flex items-center gap-2">
+                <div
+                  class="w-10 h-10 rounded-xl border-2 border-primary/15 shrink-0 transition-colors"
+                  :style="{ backgroundColor: form.color }"
+                />
+                <input
+                  ref="colorInputRef"
+                  v-model="colorSearch"
+                  type="text"
+                  required
+                  placeholder="Escribí un color..."
+                  class="w-full px-4 py-3 rounded-xl bg-cream border-2 text-sm text-secondary placeholder-stone-300
+                         transition-colors outline-none focus:border-primary focus:shadow-[0_0_0_3px_rgba(234,179,8,0.15)]"
+                  :class="errors.color ? 'border-red-300' : 'border-primary/15'"
+                  @input="onColorInput"
+                  @focus="showColorDropdown = true"
+                  @blur="onColorBlur"
+                />
+              </div>
+              <Transition
+                enter-active-class="transition-all duration-150"
+                leave-active-class="transition-all duration-100"
+                enter-from-class="opacity-0 -translate-y-1"
+                leave-to-class="opacity-0 -translate-y-1"
               >
-                <span v-if="form.color === c.hex" class="absolute inset-0 flex items-center justify-center">
-                  <svg class="w-5 h-5" :class="c.hex === '#F5F5F4' || c.hex === '#EAB308' ? 'text-secondary' : 'text-white'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-                    <polyline points="20 6 9 17 4 12" />
-                  </svg>
-                </span>
-              </button>
+                <div
+                  v-if="showColorDropdown && filteredColors.length"
+                  class="absolute z-50 left-0 right-0 mt-1 bg-white rounded-xl border border-primary/10 shadow-lg max-h-48 overflow-y-auto"
+                >
+                  <button
+                    v-for="c in filteredColors"
+                    :key="c.hex"
+                    type="button"
+                    @mousedown.prevent="selectColor(c)"
+                    class="w-full flex items-center gap-3 px-3 py-2 hover:bg-cream transition-colors text-left"
+                  >
+                    <div class="w-6 h-6 rounded-lg border border-primary/10 shrink-0" :style="{ backgroundColor: c.hex }" />
+                    <span class="text-sm text-secondary">{{ c.name }}</span>
+                  </button>
+                </div>
+              </Transition>
             </div>
-            <p class="text-[10px] text-secondary/40 mt-1.5 text-center">{{ colorOptions.find(c => c.hex === form.color)?.name || '' }}</p>
+            <p class="text-[10px] text-secondary/40 mt-1 text-center">{{ selectedColorName }}</p>
             <p v-if="errors.color" class="text-red-500 text-xs mt-1">{{ errors.color }}</p>
           </div>
 
