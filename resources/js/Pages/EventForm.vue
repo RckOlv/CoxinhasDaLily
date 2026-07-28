@@ -27,7 +27,7 @@ const colorOptions = ref([])
 
 onMounted(async () => {
   try {
-    const res = await fetch('https://csscolorsapi.com/api/colors')
+    const res = await fetch('https://www.csscolorsapi.com/api/colors')
     const data = await res.json()
     colorOptions.value = data.colors.map(c => ({
       name: c.name.replace(/([A-Z])/g, ' $1').trim(),
