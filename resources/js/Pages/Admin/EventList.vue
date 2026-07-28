@@ -30,6 +30,55 @@ const statusFilter = ref('todos')
 const dateFilter = ref('all')
 const viewMode = ref('list')
 const expandedEvent = ref(null)
+const editingEventId = ref(null)
+const editingProducts = ref([])
+const savingProducts = ref(false)
+
+function startEditingProducts(event) {
+  editingEventId.value = event.id
+  editingProducts.value = event.products.map(p => ({
+    id: p.id,
+    name: p.name,
+    price: parseFloat(p.price),
+    units_per_package: p.units_per_package || 1,
+    quantity: p.pivot.quantity,
+  }))
+}
+
+function cancelEditingProducts() {
+  editingEventId.value = null
+  editingProducts.value = []
+}
+
+function updateEditingQuantity(productId, newQty) {
+  const product = editingProducts.value.find(p => p.id === productId)
+  if (product) {
+    product.quantity = Math.max(0, parseInt(newQty) || 0)
+  }
+}
+
+function saveProductQuantities(eventId) {
+  savingProducts.value = true
+  router.put(route('admin.events.products', eventId), {
+    products: editingProducts.value.map(p => ({ id: p.id, quantity: p.quantity })),
+  }, {
+    preserveScroll: true,
+    onSuccess: () => {
+      editingEventId.value = null
+      editingProducts.value = []
+      savingProducts.value = false
+    },
+    onFinish: () => { savingProducts.value = false },
+  })
+}
+
+function editingEstimatedTotal() {
+  return editingProducts.value.reduce((sum, p) => sum + (p.quantity * p.price), 0)
+}
+
+function eventEstimatedTotal(event) {
+  return event.products.reduce((sum, p) => sum + (p.pivot.quantity * parseFloat(p.price)), 0)
+}
 
 const dateRanges = [
   { value: 'all', label: 'Todas' },
@@ -297,6 +346,10 @@ function timeAgo(date) {
             @click="toggleExpand(event)"
             class="w-full p-3 flex items-center gap-3 text-left"
           >
+            <div
+              class="w-2 h-2 rounded-full shrink-0"
+              :style="{ backgroundColor: event.color || '#EAB308' }"
+            />
             <div class="flex-1 min-w-0">
               <div class="flex items-center gap-2 mb-0.5">
                 <h3 class="font-display font-bold text-sm text-secondary truncate">{{ event.client_name }}</h3>
@@ -307,7 +360,10 @@ function timeAgo(date) {
               <div class="flex items-center gap-3 text-xs text-secondary/50">
                 <span>{{ formatEventDate(event.event_date) }}</span>
                 <span>{{ event.quantity }} personas</span>
-                <span class="font-semibold text-primary-dark">{{ formatPrice(event.total) }}</span>
+              </div>
+              <div class="flex items-center gap-3 text-xs mt-0.5">
+                <span class="font-semibold text-primary-dark">{{ formatPrice(eventEstimatedTotal(event)) }}</span>
+                <span v-if="event.notes" class="text-secondary/30 truncate max-w-[140px]">{{ event.notes }}</span>
               </div>
             </div>
             <div class="flex items-center gap-2 shrink-0">
@@ -357,8 +413,34 @@ function timeAgo(date) {
 
                 <!-- Products -->
                 <div v-if="event.products?.length" class="bg-cream rounded-xl p-3">
-                  <p class="text-[10px] font-semibold text-secondary/40 mb-2 uppercase tracking-wide">Productos</p>
-                  <div class="space-y-1.5">
+                  <div class="flex items-center justify-between mb-2">
+                    <p class="text-[10px] font-semibold text-secondary/40 uppercase tracking-wide">Productos</p>
+                    <button
+                      v-if="editingEventId !== event.id"
+                      @click.stop="startEditingProducts(event)"
+                      class="text-[10px] text-primary-dark font-semibold hover:underline"
+                    >
+                      Editar cantidades
+                    </button>
+                    <div v-else class="flex gap-2">
+                      <button
+                        @click.stop="cancelEditingProducts"
+                        class="text-[10px] text-secondary/40 font-semibold hover:underline"
+                      >
+                        Cancelar
+                      </button>
+                      <button
+                        @click.stop="saveProductQuantities(event.id)"
+                        :disabled="savingProducts"
+                        class="text-[10px] text-green-600 font-semibold hover:underline disabled:opacity-50"
+                      >
+                        {{ savingProducts ? 'Guardando...' : 'Guardar' }}
+                      </button>
+                    </div>
+                  </div>
+
+                  <!-- View mode -->
+                  <div v-if="editingEventId !== event.id" class="space-y-1.5">
                     <div v-for="item in event.products" :key="item.id" class="flex justify-between text-xs">
                       <span class="text-secondary/70">
                         {{ item.pivot.quantity }}x {{ item.name }}
@@ -366,6 +448,41 @@ function timeAgo(date) {
                           ({{ item.pivot.quantity * item.units_per_package }} uds)
                         </span>
                       </span>
+                      <span class="text-secondary/50">{{ formatPrice(item.pivot.quantity * parseFloat(item.price)) }}</span>
+                    </div>
+                    <div class="border-t border-primary/10 pt-1.5 mt-1.5 flex justify-between">
+                      <span class="text-[10px] font-bold text-secondary/40">Estimado</span>
+                      <span class="font-display font-bold text-primary-dark text-xs">{{ formatPrice(eventEstimatedTotal(event)) }}</span>
+                    </div>
+                  </div>
+
+                  <!-- Edit mode -->
+                  <div v-else class="space-y-2">
+                    <div v-for="item in editingProducts" :key="item.id" class="flex items-center justify-between gap-2">
+                      <span class="text-xs text-secondary/70 flex-1 min-w-0 truncate">{{ item.name }}</span>
+                      <div class="flex items-center gap-1.5 shrink-0">
+                        <button
+                          @click.stop="updateEditingQuantity(item.id, item.quantity - 1)"
+                          class="w-6 h-6 rounded bg-white border border-primary/15 flex items-center justify-center text-secondary/40 active:bg-primary/10"
+                        >−</button>
+                        <input
+                          type="number"
+                          :value="item.quantity"
+                          @input="updateEditingQuantity(item.id, $event.target.value)"
+                          @click.stop
+                          min="0"
+                          class="w-10 h-6 text-center text-xs rounded border border-primary/15 bg-white text-secondary font-semibold [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                        />
+                        <button
+                          @click.stop="updateEditingQuantity(item.id, item.quantity + 1)"
+                          class="w-6 h-6 rounded bg-white border border-primary/15 flex items-center justify-center text-secondary/40 active:bg-primary/10"
+                        >+</button>
+                      </div>
+                      <span class="text-[10px] text-secondary/40 w-16 text-right">{{ formatPrice(item.quantity * item.price) }}</span>
+                    </div>
+                    <div class="border-t border-primary/10 pt-1.5 mt-1.5 flex justify-between">
+                      <span class="text-[10px] font-bold text-secondary/40">Estimado</span>
+                      <span class="font-display font-bold text-primary-dark text-xs">{{ formatPrice(editingEstimatedTotal()) }}</span>
                     </div>
                   </div>
                 </div>
