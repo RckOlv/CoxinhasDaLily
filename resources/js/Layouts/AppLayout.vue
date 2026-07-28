@@ -12,7 +12,7 @@ const showAdminMore = ref(false)
 const page = usePage()
 const isHome = computed(() => page.url === '/')
 const isAdmin = computed(() => page.url.startsWith('/admin'))
-const isMoreActive = computed(() => page.url.startsWith('/admin/categorias') || page.url.startsWith('/admin/galeria') || page.url.startsWith('/admin/videos'))
+const isMoreActive = computed(() => page.url.startsWith('/admin/galeria') || page.url.startsWith('/admin/videos'))
 
 const scrolled = ref(false)
 
@@ -296,15 +296,15 @@ onBeforeUnmount(() => {
           Pedidos
         </Link>
         <Link
-          href="/"
-          class="flex flex-col items-center gap-0.5 px-3 py-1 text-xs font-medium transition-colors text-white/50 hover:text-white"
+          href="/admin/categorias"
+          class="flex flex-col items-center gap-0.5 px-3 py-1 text-xs font-medium transition-colors"
+          :class="$page.url.startsWith('/admin/categorias') ? 'text-primary' : 'text-white/50 hover:text-white'"
         >
           <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="10" />
-            <line x1="15" y1="9" x2="9.707" y2="15.293" />
-            <line x1="9" y1="9" x2="15.293" y2="9.707" />
+            <line x1="8" y1="6" x2="21" y2="6" /><line x1="8" y1="12" x2="21" y2="12" /><line x1="8" y1="18" x2="21" y2="18" />
+            <line x1="3" y1="6" x2="3.01" y2="6" /><line x1="3" y1="12" x2="3.01" y2="12" /><line x1="3" y1="18" x2="3.01" y2="18" />
           </svg>
-          Tienda
+          Categorías
         </Link>
         <!-- Más (overflow) -->
         <div class="relative">
@@ -330,16 +330,15 @@ onBeforeUnmount(() => {
               class="absolute bottom-full right-0 mb-2 w-44 bg-white rounded-2xl shadow-2xl border border-primary/10 overflow-hidden"
             >
               <Link
-                href="/admin/categorias"
-                class="flex items-center gap-3 px-4 py-3 text-sm font-medium transition-colors"
-                :class="$page.url.startsWith('/admin/categorias') ? 'bg-primary/10 text-secondary' : 'text-secondary/70 hover:bg-cream'"
+                href="/"
+                class="flex items-center gap-3 px-4 py-3 text-sm font-medium transition-colors text-secondary/70 hover:bg-cream"
                 @click="showAdminMore = false"
               >
                 <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <line x1="8" y1="6" x2="21" y2="6" /><line x1="8" y1="12" x2="21" y2="12" /><line x1="8" y1="18" x2="21" y2="18" />
-                  <line x1="3" y1="6" x2="3.01" y2="6" /><line x1="3" y1="12" x2="3.01" y2="12" /><line x1="3" y1="18" x2="3.01" y2="18" />
+                  <circle cx="12" cy="12" r="10" />
+                  <line x1="15" y1="9" x2="9.707" y2="15.293" /><line x1="9" y1="9" x2="15.293" y2="9.707" />
                 </svg>
-                Categorías
+                Tienda
               </Link>
               <Link
                 href="/admin/galeria"

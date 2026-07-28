@@ -104,6 +104,10 @@ class EventFormController extends Controller
         $phone = config('services.whatsapp');
         $date = \Carbon\Carbon::parse($event->event_date)->format('d/m/Y');
 
+        $productsList = $event->products->map(function ($p) {
+            return "- {$p->name}";
+        })->implode("\n");
+
         $message = "¡Hola Lily! 🎉 Quiero solicitar un evento:\n\n"
             . "👤 *Cliente:* {$event->client_name}\n"
             . "📱 *WhatsApp:* {$event->client_whatsapp}\n"
