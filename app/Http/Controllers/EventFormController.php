@@ -104,6 +104,20 @@ class EventFormController extends Controller
         $phone = config('services.whatsapp');
         $date = \Carbon\Carbon::parse($event->event_date)->format('d/m/Y');
 
+        $colorNames = [
+            '#EAB308' => 'Dorado',
+            '#F472B6' => 'Rosa',
+            '#EF4444' => 'Rojo',
+            '#3B82F6' => 'Azul',
+            '#22C55E' => 'Verde',
+            '#A855F7' => 'Morado',
+            '#F97316' => 'Naranja',
+            '#14B8A6' => 'Turquesa',
+            '#F5F5F4' => 'Blanco',
+            '#1C1917' => 'Negro',
+        ];
+        $colorName = $colorNames[$event->color] ?? $event->color;
+
         $productsList = $event->products->map(function ($p) {
             return "- {$p->name}";
         })->implode("\n");
@@ -115,7 +129,7 @@ class EventFormController extends Controller
             . "🕐 *Horario de retiro:* {$event->pickup_time}\n"
             . "👥 *Cantidad de personas:* {$event->quantity}\n"
             . "🎊 *Tipo de evento:* {$event->event_type}\n"
-            . "🎨 *Color:* {$event->color}\n"
+            . "🎨 *Color:* {$colorName}\n"
             . ($event->notes ? "📝 *Observaciones:* {$event->notes}\n" : "")
             . "\n🛍️ *Productos:*\n{$productsList}\n\n"
             . "Quedo a la espera del presupuesto! 😊";

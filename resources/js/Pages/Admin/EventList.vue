@@ -367,7 +367,6 @@ function timeAgo(date) {
               </div>
             </div>
             <div class="flex items-center gap-2 shrink-0">
-              <span class="text-[10px] text-secondary/30">{{ timeAgo(event.created_at) }}</span>
               <svg class="w-4 h-4 text-secondary/30 transition-transform" :class="{ 'rotate-180': expandedEvent === event.id }" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
                 <polyline points="6 9 12 15 18 9" />
               </svg>

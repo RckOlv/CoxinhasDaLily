@@ -15,13 +15,26 @@ const form = ref({
   quantity: 100,
   pickup_time: '',
   event_type: 'cumpleanos',
-  color: '',
+  color: '#EAB308',
   notes: '',
   products: [],
 })
 
 const errors = ref({})
 const sending = ref(false)
+
+const colorOptions = [
+  { name: 'Dorado', hex: '#EAB308' },
+  { name: 'Rosa', hex: '#F472B6' },
+  { name: 'Rojo', hex: '#EF4444' },
+  { name: 'Azul', hex: '#3B82F6' },
+  { name: 'Verde', hex: '#22C55E' },
+  { name: 'Morado', hex: '#A855F7' },
+  { name: 'Naranja', hex: '#F97316' },
+  { name: 'Turquesa', hex: '#14B8A6' },
+  { name: 'Blanco', hex: '#F5F5F4' },
+  { name: 'Negro', hex: '#1C1917' },
+]
 
 function toggleProduct(product) {
   const idx = form.value.products.findIndex(p => p.id === product.id)
@@ -149,9 +162,12 @@ function submit() {
             <label class="block text-xs font-semibold text-secondary/60 mb-1.5 uppercase tracking-wide">WhatsApp *</label>
             <input
               v-model="form.client_whatsapp"
-              type="text"
+              type="tel"
+              inputmode="numeric"
+              pattern="[0-9+\-\s]*"
               required
               placeholder="Ej: +54 9 11 1234-5678"
+              @input="form.client_whatsapp = $event.target.value.replace(/[^0-9+\-\s]/g, '')"
               class="w-full px-4 py-3 rounded-xl bg-cream border-2 text-sm text-secondary placeholder-stone-300
                      transition-colors outline-none focus:border-primary focus:shadow-[0_0_0_3px_rgba(234,179,8,0.15)]"
               :class="errors.client_whatsapp ? 'border-red-300' : 'border-primary/15'"
@@ -225,15 +241,24 @@ function submit() {
           <!-- Color -->
           <div>
             <label class="block text-xs font-semibold text-secondary/60 mb-1.5 uppercase tracking-wide">Color del evento *</label>
-            <input
-              v-model="form.color"
-              type="text"
-              required
-              placeholder="Ej: Rosa y dorado, Azul marino..."
-              class="w-full px-4 py-3 rounded-xl bg-cream border-2 text-sm text-secondary placeholder-stone-300
-                     transition-colors outline-none focus:border-primary focus:shadow-[0_0_0_3px_rgba(234,179,8,0.15)]"
-              :class="errors.color ? 'border-red-300' : 'border-primary/15'"
-            />
+            <div class="grid grid-cols-5 gap-2">
+              <button
+                v-for="c in colorOptions"
+                :key="c.hex"
+                type="button"
+                @click="form.color = c.hex"
+                class="relative w-full aspect-square rounded-xl border-2 transition-all active:scale-95"
+                :class="form.color === c.hex ? 'border-secondary shadow-md scale-105' : 'border-primary/10'"
+                :style="{ backgroundColor: c.hex }"
+              >
+                <span v-if="form.color === c.hex" class="absolute inset-0 flex items-center justify-center">
+                  <svg class="w-5 h-5" :class="c.hex === '#F5F5F4' || c.hex === '#EAB308' ? 'text-secondary' : 'text-white'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12" />
+                  </svg>
+                </span>
+              </button>
+            </div>
+            <p class="text-[10px] text-secondary/40 mt-1.5 text-center">{{ colorOptions.find(c => c.hex === form.color)?.name || '' }}</p>
             <p v-if="errors.color" class="text-red-500 text-xs mt-1">{{ errors.color }}</p>
           </div>
 
