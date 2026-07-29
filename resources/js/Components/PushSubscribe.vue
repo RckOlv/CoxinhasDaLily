@@ -1,5 +1,6 @@
 <script setup>
 import { ref, onMounted } from 'vue'
+import axios from 'axios'
 
 const supported = ref(false)
 const subscribed = ref(false)
@@ -72,21 +73,16 @@ async function subscribe() {
     })
 
     const json = subscription.toJSON()
-    const res = await fetch('/api/push/subscribe', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
-      body: JSON.stringify({
+    try {
+      await axios.post('/api/push/subscribe', {
         endpoint: json.endpoint,
         keys: json.keys,
-      }),
-    })
-
-    if (res.ok) {
+      })
       subscribed.value = true
       showPrompt.value = false
       success.value = '¡Notificaciones activadas!'
       setTimeout(() => { success.value = '' }, 3000)
-    } else {
+    } catch {
       error.value = 'Error al guardar suscripción.'
     }
   } catch (e) {
