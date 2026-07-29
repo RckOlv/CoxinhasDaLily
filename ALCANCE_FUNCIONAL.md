@@ -1,165 +1,150 @@
 # Alcance Funcional — Coxinhas da Lily
 
-## Sistema de E-commerce y Gestión de Eventos
+## Sistema de Ventas y Eventos
 
 ---
 
 ## 1. Resumen
 
-Sistema web completo para la venta de productos gastronómicos artesanales (coxinhas, churros, empanadas, salgados) y gestión de eventos sociales (cumpleaños, casamientos, corporativos). Incluye catálogo público, carrito de compras, checkout vía WhatsApp, panel de administración y sistema de pedidos con reserva de eventos.
+Sistema web para la venta de productos gastronómicos artesanales (coxinhas, churros, empanadas, salgados) y gestión de eventos (cumpleaños, casamientos, corporativos). Incluye tienda virtual, carrito de compras, pedidos por WhatsApp, y un panel privado para administrar todo.
 
 ---
 
-## 2. Funcionalidades Públicas (Tienda)
+## 2. Funcionalidades Públicas (Lo que ve el cliente)
 
-### 2.1 Landing Page
-- Hero con carrusel de imágenes promocionales
-- Sección "Quién soy" con descripción del emprendimiento
-- Carrusel de videos dinámicos (desde panel admin)
-- Carrusel de galería de fotos (desde panel admin)
-- Sección de eventos destacados
-- Llamada a la acción para pedir por WhatsApp
-- Botón flotante de WhatsApp directo
+### 2.1 Página Principal
+- Carrusel de imágenes promocionales
+- Sección "Quién soy" con la historia del emprendimiento
+- Videos automáticos (se suben desde el panel)
+- Galería de fotos (se suben desde el panel)
+- Eventos destacados
+- Botón directo a WhatsApp
 
 ### 2.2 Catálogo de Productos
-- Listado de productos agrupados por categoría
-- Imagen, nombre, precio, descripción y badge (ej: "Apto freezer", "Nuevo")
-- Indicador de stock disponible
-- Vista de unidades por paquete
-- Botón "Agregar al carrito" por producto
+- Productos ordenados por categoría
+- Foto, nombre, precio, descripción y etiqueta (ej: "Apto freezer", "Nuevo")
+- Stock disponible
+- Unidades por paquete
+- Botón "Agregar al carrito"
 
 ### 2.3 Carrito de Compras
-- Offcanvas lateral con productos seleccionados
-- Sumar/restar cantidades desde el carrito
-- Precio total calculado en tiempo real
-- Persistencia entre páginas
+- Panel lateral con los productos elegidos
+- Sumar o restar cantidades
+- Precio total calculado al instante
+- El carrito guarda lo seleccionado aunque navegues por la página
 
-### 2.4 Checkout (WhatsApp)
-- Formulario: nombre, WhatsApp, método de entrega (retiro/dirección), método de pago
-- Validación de campos (nombre sin números, teléfono numérico, etc.)
-- Al confirmar, crea el pedido en la base de datos
-- Redirige a WhatsApp con mensaje pre-armado con todos los detalles del pedido
+### 2.4 Proceso de Pedido (WhatsApp)
+- Formulario: nombre, WhatsApp, cómo retira (pasa a buscar / envío), forma de pago
+- Validación: el nombre no acepta números, el teléfono no acepta letras
+- Al confirmar, el pedido queda guardado
+- Te redirige a WhatsApp con el mensaje listo con todos los detalles
 
 ### 2.5 Formulario de Eventos
-- Selección de fecha (mínimo 15 días de anticipación)
-- Verificación de fechas ocupadas
-- Tipos de evento: cumpleaños, casamiento, corporativo, otro
+- Elegir fecha (mínimo 15 días antes)
+- Verifica que la fecha no esté ocupada
+- Tipo de evento: cumpleaños, casamiento, corporativo, otro
 - Cantidad de personas (mínimo 100)
 - Horario de retiro
-- Color del evento (selector con búsqueda + 148 colores CSS + selector nativo)
-- Selección de productos desde el catálogo (agrupados por categoría)
+- Elegir color del evento (selector con búsqueda de 148 colores con nombre)
+- Elegir productos del catálogo
 - Observaciones (texto libre)
 - Límite: 2 eventos por fin de semana, 12 por mes
-- Al confirmar, crea el evento en la BD y redirige a WhatsApp
+- Al confirmar, el evento queda guardado y te redirige a WhatsApp
 
 ---
 
-## 3. Panel de Administración
+## 3. Panel Privado (Lo que ves vos)
 
-### 3.1 Dashboard (Pantalla principal post-login)
-- Resumen visual con tarjetas de:
+### 3.1 Pantalla Principal (después de iniciar sesión)
+- Resumen visual con tarjetas:
   - Pedidos pendientes del día
-  - Próximos eventos (ventana de 15 días)
-  - Productos con stock bajo / sin stock
+  - Próximos eventos (15 días)
+  - Productos con stock bajo o sin stock
   - Eventos del mes (vs límite de 12)
-- Lista de próximos eventos con fechas y estados
+- Lista de próximos eventos
 - Alertas de stock bajo
 - Accesos directos a las secciones principales
 
-### 3.2 Gestión de Productos
-- CRUD completo: crear, editar, eliminar productos
-- Campos: nombre, descripción, precio, imagen, stock, badge, unidades por paquete
-- Edición inline de stock desde la lista
-- Eliminación directa desde la tarjeta del producto
-- Categorización de productos
+### 3.2 Administrar Productos
+- Crear, editar y eliminar productos
+- Campos: nombre, descripción, precio, foto, stock, etiqueta, unidades por paquete
+- Editar el stock directamente desde la lista
+- Eliminar con un botón desde la tarjeta del producto
+- Asignar categoría a cada producto
 
-### 3.3 Gestión de Categorías
-- CRUD completo de categorías
-- Los productos se agrupan por categoría en el catálogo
+### 3.3 Administrar Categorías
+- Crear, editar y eliminar categorías
+- Los productos se agrupan por categoría en la tienda
 
-### 3.4 Gestión de Eventos
-- Lista con filtros por estado (todos, pendiente, confirmado, completado, cancelado)
+### 3.4 Administrar Eventos
+- Lista con filtros (pendiente, confirmado, completado, cancelado)
 - Filtro por fecha (hoy, semana, mes)
-- Vista de lista con acordeón expandible
-- Vista de calendario con indicadores de días ocupados
-- Edición de cantidades de productos por evento (con precios estimados)
-- Cambio de estado del evento
-- Indicador visual de color del evento + nombre del color
-- Observaciones visibles en vista compacta
+- Vista de lista que se expande para ver detalles
+- Vista de calendario con puntos en los días ocupados
+- Editar cantidades de productos por evento (con precios estimados)
+- Cambiar estado del evento
+- Color del evento visible + nombre del color
+- Observaciones visibles sin expandir
 
-### 3.5 Gestión de Pedidos
-- Lista con filtros por estado (todos, pendiente, confirmado, entregado, cancelado)
+### 3.5 Administrar Pedidos
+- Lista con filtros (pendiente, confirmado, entregado, cancelado)
 - Filtro por fecha (hoy, semana, mes)
-- Vista de lista con acordeón expandible (detalles: productos, total, método de pago, dirección)
-- Vista de calendario con indicadores de pedidos por día
-- Cambio de estado: pendiente → confirmado (descuenta stock) → entregado → cancelado
-- Confirmación con SweetAlert2 antes de cada cambio
+- Vista de lista que se expande (productos, total, método de pago, dirección)
+- Vista de calendario con puntos en los días con pedidos
+- Cambiar estado: pendiente → confirmado (descuenta stock) → entregado → cancelado
+- Alertas de confirmación antes de cada cambio
 
-### 3.6 Gestión de Galería
-- Subida de imágenes para la landing page
-- Vista previa en el admin
-- Activar/desactivar visibilidad
-- Eliminación de imágenes
+### 3.6 Administrar Galería
+- Subir fotos para la página principal
+- Vista previa
+- Activar/desactivar si se muestra
+- Eliminar fotos
 
-### 3.7 Gestión de Videos
-- Subida de videos con título personalizado
-- Vista previa en el admin
-- Activar/desactivar visibilidad
-- Eliminación de videos
+### 3.7 Administrar Videos
+- Subir videos con título personalizado
+- Vista previa
+- Activar/desactivar si se muestra
+- Eliminar videos
 
 ---
 
 ## 4. Notificaciones
 
-### 4.1 Push Notifications (Por Web)
-- Suscripción de clientes desde el checkout
-- Envío de notificación al cliente cuando su pedido es confirmado
-- Envío de notificación al cliente cuando su pedido es entregado
-- Notificación por cliente (no broadcast)
+### 4.1 Notificaciones al Celular (por la web)
+- El cliente puede suscribirse al hacer un pedido
+- El cliente recibe una notificación cuando su pedido se confirma
+- El cliente recibe una notificación cuando su pedido se entrega
+- Cada cliente recibe solo sus propias notificaciones
 
 ---
 
-## 5. Diseño y UX
+## 5. Diseño
 
-- **Mobile-first**: Diseñado prioritariamente para celulares
-- **Navegación inferior** en mobile con acceso rápido a secciones principales
-- **Navegación superior** en desktop con tabs
-- **Paleta de colores personalizada**: primary (amarillo), secondary (marrón), cream (fondo)
-- **Tipografía**: Fredoka (títulos), Inter (texto)
-- **Responsive**: Adaptado a celulares, tablets y desktop
-- **Transiciones y animaciones** suaves
-- **SweetAlert2** para confirmaciones y toasts
-- **Google Analytics** preparado para activar (solo falta el ID)
-
----
-
-## 6. Stack Técnico
-
-| Componente | Tecnología |
-|-----------|-----------|
-| Backend | Laravel 11 (PHP 8.4) |
-| Frontend | Vue 3 con Inertia.js |
-| CSS | Tailwind CSS v4 |
-| Compilación | Vite 8 |
-| Base de datos | SQLite (MySQL-ready) |
-| Autenticación | Laravel Breeze |
-| Push notifications | Web Push API + VAPID |
+- **Diseñado para celulares** principalmente
+- **Menú inferior** en el celular para acceso rápido
+- **Menú superior** en computadora
+- **Colores personalizados**: amarillo, marrón y crema
+- Letras modernas y fáciles de leer
+- Se ve bien en celulares, tablets y computadoras
+- Animaciones suaves
+- Alertas visuales para confirmar acciones importantes
+- Estadísticas de Google (se activa cuando quieras)
 
 ---
 
-## 7. Presupuesto Sugerido
+## 6. Presupuesto
 
 ### Desarrollo
-- **Sistema completo + puesta en marcha**: $250.000 ARS
-- **Incluye**: todas las funcionalidades detalladas arriba, instalación en hosting, configuración de dominio y SSL
+- **Sistema completo puesto en marcha**: $250.000 ARS
+- Incluye: todas las funcionalidades detalladas, instalación en el hosting, configuración del dominio y certificado de seguridad (SSL)
 
 ### Hosting
-- **DonWeb 48 meses**: $120.000 ARS
-- **Incluye**: hosting compartido, dominio, SSL, soporte del proveedor
+- **DonWeb por 48 meses**: $120.000 ARS
+- Incluye: hosting, dominio, certificado de seguridad, soporte técnico del proveedor
 
 ### Mantenimiento mensual (opcional)
-- **$10.000 ARS/mes**
-- **Incluye**: corrección de bugs, backups, soporte técnico, 1 hora de consulta mensual
+- **$10.000 ARS por mes**
+- Incluye: corrección de errores, copias de seguridad, soporte técnico
 
 ---
 
