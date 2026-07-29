@@ -337,8 +337,19 @@ onBeforeUnmount(() => {
               class="absolute bottom-full right-0 mb-2 w-44 bg-white rounded-2xl shadow-2xl border border-primary/10 overflow-hidden"
             >
               <Link
+                href="/admin"
+                class="flex items-center gap-3 px-4 py-3 text-sm font-medium transition-colors"
+                :class="$page.url === '/admin' ? 'bg-primary/10 text-secondary' : 'text-secondary/70 hover:bg-cream'"
+                @click="showAdminMore = false"
+              >
+                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" /><polyline points="9 22 9 12 15 12 15 22" />
+                </svg>
+                Panel
+              </Link>
+              <Link
                 href="/"
-                class="flex items-center gap-3 px-4 py-3 text-sm font-medium transition-colors text-secondary/70 hover:bg-cream"
+                class="flex items-center gap-3 px-4 py-3 text-sm font-medium transition-colors border-t border-primary/5 text-secondary/70 hover:bg-cream"
                 @click="showAdminMore = false"
               >
                 <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
