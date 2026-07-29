@@ -25,6 +25,10 @@ COPY . .
 # Install PHP deps
 RUN composer install --no-dev --optimize-autoloader --no-interaction
 
+# Build-time args for Vite
+ARG VITE_VAPID_PUBLIC_KEY
+ENV VITE_VAPID_PUBLIC_KEY=$VITE_VAPID_PUBLIC_KEY
+
 # Install JS deps and build assets
 RUN npm install && npm run build
 
