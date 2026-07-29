@@ -224,9 +224,10 @@ onBeforeUnmount(() => {
         </Link>
         <Link
           v-else
-          href="/admin/productos"
+          href="/admin"
           class="flex flex-col items-center gap-0.5 px-3 py-1 text-xs font-medium transition-colors"
           :class="$page.url.startsWith('/admin') ? 'text-primary-dark' : 'text-stone-400 hover:text-secondary'"
+          translate="no"
         >
           <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" />
@@ -259,7 +260,7 @@ onBeforeUnmount(() => {
     <nav v-if="isAdmin" class="fixed bottom-0 left-0 right-0 z-50 bg-secondary border-t border-secondary/80 shadow-[0_-4px_20px_rgba(0,0,0,0.15)] lg:hidden">
       <div class="flex items-center justify-around h-16 max-w-lg mx-auto">
         <Link
-          href="/admin/productos"
+          href="/admin"
           class="flex flex-col items-center gap-0.5 px-3 py-1 text-xs font-medium transition-colors"
           :class="$page.url.startsWith('/admin/productos') ? 'text-primary' : 'text-white/50 hover:text-white'"
         >

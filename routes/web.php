@@ -34,6 +34,8 @@ Route::get('/eventos', [EventFormController::class, 'show'])->name('events.form'
 Route::post('/eventos', [EventFormController::class, 'store'])->name('events.store');
 
 Route::prefix('admin')->middleware('auth')->group(function () {
+    Route::get('/', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
+
     Route::get('/productos', [AdminProductController::class, 'index'])->name('admin.products');
     Route::post('/productos', [AdminProductController::class, 'store'])->name('admin.products.store');
     Route::put('/productos/{product}', [AdminProductController::class, 'update'])->name('admin.products.update');
