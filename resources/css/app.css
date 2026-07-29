@@ -84,9 +84,13 @@
 
 @media (min-width: 1024px) {
   .gallery-scroll {
-    justify-content: center;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    overflow: visible;
+    gap: 0.75rem;
   }
   .gallery-scroll > * {
-    flex: 0 0 calc(33.333% - 0.5rem);
+    flex: unset;
+    scroll-snap-align: unset;
   }
 }

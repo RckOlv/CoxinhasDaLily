@@ -354,6 +354,10 @@ onBeforeUnmount(() => {
               class="max-w-full max-h-[85vh] rounded-2xl shadow-2xl object-contain animate-scale-in pointer-events-none"
             />
 
+            <p v-if="galleryImages.length > 1" class="absolute bottom-6 left-1/2 -translate-x-1/2 px-3 py-1.5 rounded-full bg-white/10 backdrop-blur-sm text-white/60 text-[11px] font-medium z-20 sm:hidden">
+              ← Deslizá para ver más →
+            </p>
+
             <button
               @click="nextImage"
               class="hidden sm:flex absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/10 backdrop-blur-sm
@@ -416,6 +420,10 @@ onBeforeUnmount(() => {
               playsinline
               class="max-w-full max-h-[85vh] rounded-2xl shadow-2xl animate-scale-in"
             />
+
+            <p v-if="videos.length > 1" class="absolute bottom-6 left-1/2 -translate-x-1/2 px-3 py-1.5 rounded-full bg-white/10 backdrop-blur-sm text-white/60 text-[11px] font-medium z-20 sm:hidden">
+              ← Deslizá para ver más →
+            </p>
 
             <button
               @click="nextVideo"
