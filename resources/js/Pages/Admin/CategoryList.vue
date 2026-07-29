@@ -202,6 +202,7 @@ async function destroy(category) {
                   v-model="form.name"
                   type="text"
                   required
+                  @input="form.name = $event.target.value.replace(/[0-9]/g, '')"
                   class="w-full px-4 py-2.5 rounded-xl bg-white border border-primary/10 text-sm text-secondary
                          placeholder:text-secondary/30 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/30
                          transition-all"

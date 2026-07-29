@@ -172,6 +172,7 @@ async function confirm() {
                 v-model="form.name"
                 type="text"
                 placeholder="Ej: María García"
+                @input="form.name = $event.target.value.replace(/[0-9]/g, '')"
                 class="w-full px-4 py-3 rounded-xl bg-white border-2 text-sm text-secondary placeholder-stone-300
                        transition-colors outline-none
                        focus:border-primary focus:shadow-[0_0_0_3px_rgba(234,179,8,0.15)]

@@ -242,6 +242,7 @@ function submit() {
               type="text"
               required
               placeholder="Tu nombre"
+              @input="form.client_name = $event.target.value.replace(/[0-9]/g, '')"
               class="w-full px-4 py-3 rounded-xl bg-cream border-2 text-sm text-secondary placeholder-stone-300
                      transition-colors outline-none focus:border-primary focus:shadow-[0_0_0_3px_rgba(234,179,8,0.15)]"
               :class="errors.client_name ? 'border-red-300' : 'border-primary/15'"

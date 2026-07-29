@@ -286,6 +286,7 @@ function decrementStock(product) {
                   <input
                     type="number"
                     min="0"
+                    inputmode="numeric"
                     :value="product.stock_quantity"
                     @change="updateStock(product, $event.target.value)"
                     @blur="updateStock(product, $event.target.value)"
@@ -463,6 +464,7 @@ function decrementStock(product) {
                     required
                     min="0"
                     step="0.01"
+                    inputmode="decimal"
                     class="w-full px-4 py-2.5 rounded-xl bg-white border border-primary/10 text-sm text-secondary
                            placeholder:text-secondary/30 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/30
                            transition-all tabular-nums"
@@ -476,6 +478,7 @@ function decrementStock(product) {
                     type="number"
                     required
                     min="0"
+                    inputmode="numeric"
                     class="w-full px-4 py-2.5 rounded-xl bg-white border border-primary/10 text-sm text-secondary
                            placeholder:text-secondary/30 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/30
                            transition-all tabular-nums"
@@ -523,6 +526,7 @@ function decrementStock(product) {
                     v-model="form.units_per_package"
                     type="number"
                     min="1"
+                    inputmode="numeric"
                     class="w-full px-4 py-2.5 rounded-xl bg-white border border-primary/10 text-sm text-secondary
                            placeholder:text-secondary/30 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/30
                            transition-all tabular-nums"
