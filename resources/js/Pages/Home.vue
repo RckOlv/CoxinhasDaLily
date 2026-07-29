@@ -46,20 +46,72 @@ function togglePlay(src) {
   }
 }
 
-const selectedImage = ref(null)
+const imageIndex = ref(null)
+const videoIndex = ref(null)
+const touchStartX = ref(0)
+const touchEndX = ref(0)
 
-function openImage(img) {
-  selectedImage.value = img
+function openImage(i) {
+  imageIndex.value = i
   document.body.style.overflow = 'hidden'
 }
 
-function closeImage() {
-  selectedImage.value = null
+function openVideo(i) {
+  videoIndex.value = i
+  document.body.style.overflow = 'hidden'
+}
+
+function closeMedia() {
+  imageIndex.value = null
+  videoIndex.value = null
   document.body.style.overflow = ''
 }
 
+function prevImage() {
+  if (imageIndex.value === null) return
+  imageIndex.value = (imageIndex.value - 1 + galleryImages.length) % galleryImages.length
+}
+
+function nextImage() {
+  if (imageIndex.value === null) return
+  imageIndex.value = (imageIndex.value + 1) % galleryImages.length
+}
+
+function prevVideo() {
+  if (videoIndex.value === null) return
+  videoIndex.value = (videoIndex.value - 1 + videos.length) % videos.length
+}
+
+function nextVideo() {
+  if (videoIndex.value === null) return
+  videoIndex.value = (videoIndex.value + 1) % videos.length
+}
+
+function onTouchStart(e) {
+  touchStartX.value = e.changedTouches[0].screenX
+}
+
+function onTouchEnd(e) {
+  touchEndX.value = e.changedTouches[0].screenX
+  const diff = touchStartX.value - touchEndX.value
+  if (Math.abs(diff) < 50) return
+  if (imageIndex.value !== null) {
+    diff > 0 ? nextImage() : prevImage()
+  } else if (videoIndex.value !== null) {
+    diff > 0 ? nextVideo() : prevVideo()
+  }
+}
+
 function handleKeydown(e) {
-  if (e.key === 'Escape' && selectedImage.value) closeImage()
+  if (e.key === 'Escape') closeMedia()
+  if (imageIndex.value !== null) {
+    if (e.key === 'ArrowLeft') prevImage()
+    if (e.key === 'ArrowRight') nextImage()
+  }
+  if (videoIndex.value !== null) {
+    if (e.key === 'ArrowLeft') prevVideo()
+    if (e.key === 'ArrowRight') nextVideo()
+  }
 }
 
 onMounted(() => {
@@ -175,11 +227,12 @@ onBeforeUnmount(() => {
         </p>
         <div class="flex gap-3 overflow-x-auto scroll-sm snap-x snap-mandatory pb-4 -mx-5 px-5 sm:mx-0 sm:px-0 sm:grid sm:grid-cols-2 lg:grid-cols-4 sm:snap-none">
           <div
-            v-for="video in videos"
+            v-for="(video, vi) in videos"
             :key="video.src"
             class="group rounded-2xl overflow-hidden bg-secondary-dark relative
                    transition-all duration-300 hover:shadow-xl animate-fade-in-up
-                   shrink-0 w-[70%] sm:w-auto snap-center"
+                   shrink-0 w-[70%] sm:w-auto snap-center cursor-pointer"
+            @click="openVideo(vi)"
           >
             <video
               :ref="el => { videoRefs[video.src] = el }"
@@ -241,7 +294,7 @@ onBeforeUnmount(() => {
             class="rounded-2xl overflow-hidden border border-primary/10 shadow-sm cursor-pointer
                    transition-all duration-300 hover:shadow-md hover:border-primary/25 animate-fade-in-up"
             :style="{ animationDelay: `${i * 80}ms` }"
-            @click="openImage(img)"
+            @click="openImage(i)"
           >
             <img
               :src="img.src"
@@ -254,7 +307,7 @@ onBeforeUnmount(() => {
       </div>
     </section>
 
-    <!-- Lightbox -->
+    <!-- Image Lightbox -->
     <Teleport to="body">
       <Transition
         enter-active-class="transition-opacity duration-200"
@@ -263,25 +316,117 @@ onBeforeUnmount(() => {
         leave-to-class="opacity-0"
       >
         <div
-          v-if="selectedImage"
-          class="fixed inset-0 z-[9999] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 sm:p-8"
-          @click.self="closeImage"
+          v-if="imageIndex !== null"
+          class="fixed inset-0 z-[9999] bg-black/85 backdrop-blur-sm flex items-center justify-center select-none"
+          @touchstart.passive="onTouchStart"
+          @touchend.passive="onTouchEnd"
         >
-          <button
-            @click="closeImage"
-            class="absolute top-4 right-4 sm:top-6 sm:right-6 w-10 h-10 rounded-full bg-white/10 backdrop-blur-sm
-                   flex items-center justify-center text-white hover:bg-white/20 transition-colors z-10"
-          >
-            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
-              <line x1="18" y1="6" x2="6" y2="18" />
-              <line x1="6" y1="6" x2="18" y2="18" />
-            </svg>
-          </button>
-          <img
-            :src="selectedImage.src"
-            :alt="selectedImage.alt"
-            class="max-w-full max-h-[85vh] rounded-2xl shadow-2xl object-contain animate-scale-in"
-          />
+          <div class="relative w-full h-full flex items-center justify-center p-4 sm:p-8">
+            <button
+              @click="closeMedia"
+              class="absolute top-4 right-4 sm:top-6 sm:right-6 w-10 h-10 rounded-full bg-white/10 backdrop-blur-sm
+                     flex items-center justify-center text-white hover:bg-white/20 transition-colors z-20"
+            >
+              <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+                <line x1="18" y1="6" x2="6" y2="18" />
+                <line x1="6" y1="6" x2="18" y2="18" />
+              </svg>
+            </button>
+
+            <span class="absolute top-4 left-4 sm:top-6 sm:left-6 px-3 py-1.5 rounded-full bg-white/10 backdrop-blur-sm text-white text-xs font-semibold z-20">
+              {{ imageIndex + 1 }} / {{ galleryImages.length }}
+            </span>
+
+            <button
+              @click="prevImage"
+              class="hidden sm:flex absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/10 backdrop-blur-sm
+                     items-center justify-center text-white hover:bg-white/20 transition-colors z-20"
+            >
+              <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="15 18 9 12 15 6" />
+              </svg>
+            </button>
+
+            <img
+              :key="imageIndex"
+              :src="galleryImages[imageIndex].src"
+              :alt="galleryImages[imageIndex].alt"
+              class="max-w-full max-h-[85vh] rounded-2xl shadow-2xl object-contain animate-scale-in pointer-events-none"
+            />
+
+            <button
+              @click="nextImage"
+              class="hidden sm:flex absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/10 backdrop-blur-sm
+                     items-center justify-center text-white hover:bg-white/20 transition-colors z-20"
+            >
+              <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="9 18 15 12 9 6" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </Transition>
+    </Teleport>
+
+    <!-- Video Lightbox -->
+    <Teleport to="body">
+      <Transition
+        enter-active-class="transition-opacity duration-200"
+        leave-active-class="transition-opacity duration-200"
+        enter-from-class="opacity-0"
+        leave-to-class="opacity-0"
+      >
+        <div
+          v-if="videoIndex !== null"
+          class="fixed inset-0 z-[9999] bg-black/85 backdrop-blur-sm flex items-center justify-center select-none"
+          @touchstart.passive="onTouchStart"
+          @touchend.passive="onTouchEnd"
+        >
+          <div class="relative w-full h-full flex items-center justify-center p-4 sm:p-8">
+            <button
+              @click="closeMedia"
+              class="absolute top-4 right-4 sm:top-6 sm:right-6 w-10 h-10 rounded-full bg-white/10 backdrop-blur-sm
+                     flex items-center justify-center text-white hover:bg-white/20 transition-colors z-20"
+            >
+              <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+                <line x1="18" y1="6" x2="6" y2="18" />
+                <line x1="6" y1="6" x2="18" y2="18" />
+              </svg>
+            </button>
+
+            <span class="absolute top-4 left-4 sm:top-6 sm:left-6 px-3 py-1.5 rounded-full bg-white/10 backdrop-blur-sm text-white text-xs font-semibold z-20">
+              {{ videoIndex + 1 }} / {{ videos.length }}
+            </span>
+
+            <button
+              @click="prevVideo"
+              class="hidden sm:flex absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/10 backdrop-blur-sm
+                     items-center justify-center text-white hover:bg-white/20 transition-colors z-20"
+            >
+              <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="15 18 9 12 15 6" />
+              </svg>
+            </button>
+
+            <video
+              :key="videoIndex"
+              :src="videos[videoIndex].src"
+              controls
+              autoplay
+              playsinline
+              class="max-w-full max-h-[85vh] rounded-2xl shadow-2xl animate-scale-in"
+            />
+
+            <button
+              @click="nextVideo"
+              class="hidden sm:flex absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/10 backdrop-blur-sm
+                     items-center justify-center text-white hover:bg-white/20 transition-colors z-20"
+            >
+              <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="9 18 15 12 9 6" />
+              </svg>
+            </button>
+          </div>
         </div>
       </Transition>
     </Teleport>
