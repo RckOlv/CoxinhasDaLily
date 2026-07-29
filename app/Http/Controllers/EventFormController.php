@@ -43,6 +43,7 @@ class EventFormController extends Controller
             'event_type' => 'required|string|max:255',
             'color' => 'required|string|max:255',
             'notes' => 'nullable|string',
+            'push_endpoint' => 'nullable|string',
             'products' => 'required|array|min:1',
             'products.*.id' => 'required|exists:products,id',
         ]);
@@ -86,6 +87,7 @@ class EventFormController extends Controller
             'event_type' => $validated['event_type'],
             'color' => $validated['color'],
             'notes' => $validated['notes'] ?? null,
+            'push_endpoint' => $validated['push_endpoint'] ?? null,
         ]);
 
         foreach ($validated['products'] as $product) {

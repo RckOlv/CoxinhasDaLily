@@ -187,10 +187,21 @@ function todayStr() {
   return `${year}-${month}-${day}`
 }
 
-function submit() {
+async function submit() {
   errors.value = {}
   validateDate()
   if (errors.value.event_date) return
+
+  // Capture push subscription if available
+  try {
+    if ('serviceWorker' in navigator && 'PushManager' in window) {
+      const reg = await navigator.serviceWorker.ready
+      const sub = await reg.pushManager.getSubscription()
+      if (sub) {
+        form.value.push_endpoint = sub.endpoint
+      }
+    }
+  } catch {}
 
   sending.value = true
 

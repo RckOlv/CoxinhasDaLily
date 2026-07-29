@@ -16,6 +16,7 @@ class Event extends Model
         'event_type',
         'color',
         'notes',
+        'push_endpoint',
         'status',
         'total',
         'deposit_paid',
