@@ -4,7 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\PushSubscription;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Http;
+use Minishlink\WebPush\WebPush;
+use Minishlink\WebPush\Subscription;
 
 class PushController extends Controller
 {
@@ -43,6 +44,10 @@ class PushController extends Controller
         ]);
 
         $subscriptions = PushSubscription::all();
+        if ($subscriptions->isEmpty()) {
+            return response()->json(['sent' => 0, 'failed' => 0]);
+        }
+
         $vapidPublicKey = config('services.vapid.public_key');
         $vapidPrivateKey = config('services.vapid.private_key');
 
@@ -50,36 +55,44 @@ class PushController extends Controller
             return response()->json(['error' => 'VAPID keys not configured'], 500);
         }
 
+        $webPush = new WebPush([
+            'VAPID' => [
+                'subject' => config('services.vapid.subject'),
+                'publicKey' => $vapidPublicKey,
+                'privateKey' => $vapidPrivateKey,
+            ],
+        ]);
+
+        $payload = json_encode([
+            'title' => $request->title,
+            'body' => $request->body,
+            'url' => $request->url ?? url('/'),
+        ]);
+
+        foreach ($subscriptions as $sub) {
+            $webPush->queueNotification(
+                Subscription::create([
+                    'endpoint' => $sub->endpoint,
+                    'publicKey' => $sub->p256dh,
+                    'authToken' => $sub->auth,
+                ]),
+                $payload
+            );
+        }
+
         $sent = 0;
         $failed = 0;
 
-        foreach ($subscriptions as $sub) {
-            try {
-                $payload = json_encode([
-                    'title' => $request->title,
-                    'body' => $request->body,
-                    'url' => $request->url ?? url('/'),
-                ]);
-
-                $headers = [
-                    'ttl' => 86400,
-                    'urgency' => 'high',
-                ];
-
-                $response = Http::withHeaders($headers)->withBody($payload, 'application/json')
-                    ->post($sub->endpoint);
-
-                if ($response->successful()) {
-                    $sent++;
-                } else {
-                    $failed++;
-                    if ($response->status() === 404 || $response->status() === 410) {
-                        $sub->delete();
-                    }
-                }
-            } catch (\Exception $e) {
+        foreach ($webPush->flush() as $report) {
+            if ($report->isSuccess()) {
+                $sent++;
+            } else {
                 $failed++;
-                $sub->delete();
+                $response = $report->getResponse();
+                if ($response && in_array($response->getStatusCode(), [404, 410])) {
+                    $sub = PushSubscription::where('endpoint', (string) $report->getRequest()->getUri())->first();
+                    if ($sub) $sub->delete();
+                }
             }
         }
 

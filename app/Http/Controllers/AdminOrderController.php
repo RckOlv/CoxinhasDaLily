@@ -7,6 +7,8 @@ use App\Models\Product;
 use App\Models\PushSubscription;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Minishlink\WebPush\WebPush;
+use Minishlink\WebPush\Subscription;
 
 class AdminOrderController extends Controller
 {
@@ -44,47 +46,51 @@ class AdminOrderController extends Controller
 
     private function sendPushToClient(Order $order, string $title, string $body)
     {
-        if (!$order->push_endpoint) {
-            return;
-        }
+        if (!$order->push_endpoint) return;
 
         $subscription = PushSubscription::where('endpoint', $order->push_endpoint)->first();
-        if (!$subscription) {
-            return;
-        }
+        if (!$subscription) return;
 
         $vapidPublicKey = config('services.vapid.public_key');
         $vapidPrivateKey = config('services.vapid.private_key');
+        if (!$vapidPublicKey || !$vapidPrivateKey) return;
 
-        if (!$vapidPublicKey || !$vapidPrivateKey) {
-            return;
-        }
+        $webPush = new WebPush([
+            'VAPID' => [
+                'subject' => config('services.vapid.subject'),
+                'publicKey' => $vapidPublicKey,
+                'privateKey' => $vapidPrivateKey,
+            ],
+        ]);
 
-        try {
-            $payload = json_encode([
-                'title' => $title,
-                'body' => $body,
-                'url' => url('/'),
-            ]);
+        $payload = json_encode([
+            'title' => $title,
+            'body' => $body,
+            'url' => url('/'),
+        ]);
 
-            \Http::withHeaders([
-                'ttl' => 86400,
-                'urgency' => 'high',
-            ])->withBody($payload, 'application/json')
-                ->post($subscription->endpoint);
-        } catch (\Exception $e) {
-            // Subscription may have expired
-            if ($e->response && in_array($e->response->status(), [404, 410])) {
-                $subscription->delete();
+        $webPush->queueNotification(
+            Subscription::create([
+                'endpoint' => $subscription->endpoint,
+                'publicKey' => $subscription->p256dh,
+                'authToken' => $subscription->auth,
+            ]),
+            $payload
+        );
+
+        foreach ($webPush->flush() as $report) {
+            if (!$report->isSuccess()) {
+                $response = $report->getResponse();
+                if ($response && in_array($response->getStatusCode(), [404, 410])) {
+                    $subscription->delete();
+                }
             }
         }
     }
 
     private function decrementStock(Order $order)
     {
-        if ($order->stock_decremented) {
-            return;
-        }
+        if ($order->stock_decremented) return;
 
         foreach ($order->items as $item) {
             $product = Product::find($item->product_id);
