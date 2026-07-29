@@ -6,7 +6,6 @@ use App\Models\Order;
 use App\Models\Product;
 use App\Models\PushSubscription;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 use Minishlink\WebPush\WebPush;
 use Minishlink\WebPush\Subscription;
@@ -48,20 +47,20 @@ class AdminOrderController extends Controller
     private function sendPushToClient(Order $order, string $title, string $body)
     {
         if (!$order->push_endpoint) {
-            Log::info('sendPushToClient: no push_endpoint on order', ['order_id' => $order->id]);
+            error_log('sendPushToClient: no push_endpoint on order ' . $order->id);
             return;
         }
 
         $subscription = PushSubscription::where('endpoint', $order->push_endpoint)->first();
         if (!$subscription) {
-            Log::warning('sendPushToClient: subscription not found', ['endpoint' => $order->push_endpoint]);
+            error_log('sendPushToClient: subscription not found for endpoint ' . $order->push_endpoint);
             return;
         }
 
         $vapidPublicKey = config('services.vapid.public_key');
         $vapidPrivateKey = config('services.vapid.private_key');
         if (!$vapidPublicKey || !$vapidPrivateKey) {
-            Log::error('sendPushToClient: VAPID keys not configured');
+            error_log('sendPushToClient: VAPID keys not configured');
             return;
         }
 
@@ -94,22 +93,15 @@ class AdminOrderController extends Controller
                     $reason = $report->getReason();
                     $response = $report->getResponse();
                     $statusCode = $response ? $response->getStatusCode() : 'unknown';
-                    Log::warning('sendPushToClient: push failed', [
-                        'endpoint' => $subscription->endpoint,
-                        'statusCode' => $statusCode,
-                        'reason' => $reason,
-                    ]);
+                    error_log('sendPushToClient: push failed - status=' . $statusCode . ' reason=' . $reason);
                     if ($response && in_array($statusCode, [404, 410])) {
                         $subscription->delete();
-                        Log::info('sendPushToClient: deleted expired subscription');
+                        error_log('sendPushToClient: deleted expired subscription');
                     }
                 }
             }
         } catch (\Exception $e) {
-            Log::error('sendPushToClient: exception', [
-                'message' => $e->getMessage(),
-                'trace' => $e->getTraceAsString(),
-            ]);
+            error_log('sendPushToClient: exception - ' . $e->getMessage());
         }
     }
 
