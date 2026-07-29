@@ -417,6 +417,7 @@ onBeforeUnmount(() => {
               :src="videos[videoIndex].src"
               controls
               autoplay
+              muted
               playsinline
               class="max-w-full max-h-[85vh] rounded-2xl shadow-2xl animate-scale-in"
             />
