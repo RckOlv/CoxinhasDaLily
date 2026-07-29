@@ -266,7 +266,7 @@ onBeforeUnmount(() => {
     <nav v-if="isAdmin" class="fixed bottom-0 left-0 right-0 z-50 bg-secondary border-t border-secondary/80 shadow-[0_-4px_20px_rgba(0,0,0,0.15)] lg:hidden">
       <div class="flex items-center justify-around h-16 max-w-lg mx-auto">
         <Link
-          href="/admin"
+          href="/admin/productos"
           class="flex flex-col items-center gap-0.5 px-3 py-1 text-xs font-medium transition-colors"
           :class="$page.url.startsWith('/admin/productos') ? 'text-primary' : 'text-white/50 hover:text-white'"
         >
