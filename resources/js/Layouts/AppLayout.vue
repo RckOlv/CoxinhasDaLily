@@ -100,12 +100,18 @@ onBeforeUnmount(() => {
             Eventos
           </Link>
           <Link
-            v-if="isAdmin"
-            href="/admin/pedidos"
+            href="/admin"
             class="px-4 py-2 rounded-xl text-sm font-semibold transition-colors"
-            :class="$page.url === '/admin/pedidos' ? 'bg-primary/15 text-secondary' : 'text-stone-400 hover:text-secondary hover:bg-primary/5'"
+            :class="
+              isHome
+                ? (scrolled
+                    ? ($page.url.startsWith('/admin') ? 'bg-primary/15 text-secondary' : 'text-stone-400 hover:text-secondary hover:bg-primary/5')
+                    : ($page.url.startsWith('/admin') ? 'text-white bg-white/15' : 'text-white/70 hover:text-white hover:bg-white/10'))
+                : ($page.url.startsWith('/admin') ? 'bg-primary/15 text-secondary' : 'text-stone-400 hover:text-secondary hover:bg-primary/5')
+            "
+            translate="no"
           >
-            Pedidos
+            Panel
           </Link>
         </nav>
 
