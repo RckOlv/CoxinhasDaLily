@@ -29,6 +29,13 @@ const submit = () => {
     <Head title="Iniciar sesión" />
 
     <div class="bg-white rounded-2xl shadow-sm border border-primary/10 p-6">
+      <div class="flex items-center gap-2 px-3 py-2 rounded-xl bg-amber-50 border border-amber-200 mb-4">
+        <svg class="w-4 h-4 text-amber-600 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+          <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+        </svg>
+        <p class="text-xs text-amber-800 font-medium">Acceso privado · Solo para administradores</p>
+      </div>
       <h1 class="font-display font-bold text-xl text-secondary text-center mb-1">Panel de Lily</h1>
       <p class="text-sm text-secondary/50 text-center mb-6">Ingresá para gestionar tus productos</p>
 
@@ -130,7 +137,11 @@ const submit = () => {
       </div>
     </div>
 
-    <Link href="/" class="mt-6 text-sm text-secondary/40 hover:text-secondary transition-colors">
+    <Link href="/" class="mt-6 w-full flex items-center justify-center gap-2 py-3 rounded-xl border-2 border-primary/15 text-sm font-semibold text-secondary
+                  hover:bg-primary/5 hover:border-primary/30 active:scale-[0.98] transition-all">
+      <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="15 18 9 12 15 6" />
+      </svg>
       Volver al inicio
     </Link>
   </GuestLayout>

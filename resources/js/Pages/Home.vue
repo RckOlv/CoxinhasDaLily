@@ -465,7 +465,7 @@ onBeforeUnmount(() => {
           Elegí los productos y te armamos el presupuesto.
         </p>
         <p class="text-secondary/40 text-xs mb-6">
-          Mínimo 100 personas - Retiro en domicilio
+          Máximo 100 personas - Retiro en domicilio
         </p>
         <Link
           href="/eventos"

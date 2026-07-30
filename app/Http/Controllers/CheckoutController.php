@@ -16,7 +16,7 @@ class CheckoutController extends Controller
             'client_whatsapp' => 'required|string|max:255',
             'delivery_method' => 'required|in:pickup,envio',
             'delivery_address' => 'nullable|string|max:255',
-            'payment_method' => 'required|in:efectivo,transferencia,mercadopago',
+            'payment_method' => 'required|in:efectivo,transferencia',
             'items' => 'required|array|min:1',
             'items.*.product_id' => 'required|integer|exists:products,id',
             'items.*.quantity' => 'required|integer|min:1',

@@ -12,16 +12,41 @@ const form = ref({
   client_name: '',
   client_whatsapp: '',
   event_date: '',
-  quantity: 100,
+  quantity: 50,
   pickup_time: '',
   event_type: 'cumpleanos',
   color: '#EAB308',
   notes: '',
   products: [],
+  payment_plan: 'deposit',
 })
 
 const errors = ref({})
+const liveErrors = ref({})
 const sending = ref(false)
+
+const quantityError = computed(() => {
+  const q = form.value.quantity
+  if (!q || q < 1) return 'Ingresá la cantidad de personas'
+  if (q > 100) return 'Máximo 100 personas'
+  return null
+})
+
+function validateName() {
+  const v = form.value.client_name.trim()
+  if (!v) return 'El nombre es obligatorio'
+  if (v.length < 2) return 'El nombre debe tener al menos 2 caracteres'
+  if (/[0-9]/.test(v)) return 'El nombre no puede contener números'
+  return null
+}
+
+function validateWhatsApp() {
+  const v = form.value.client_whatsapp.trim()
+  if (!v) return 'El WhatsApp es obligatorio'
+  const digits = v.replace(/\D/g, '')
+  if (digits.length < 10) return 'El número debe tener al menos 10 dígitos'
+  return null
+}
 
 const colorOptions = ref([])
 
@@ -189,6 +214,12 @@ function todayStr() {
 
 async function submit() {
   errors.value = {}
+
+  const nameErr = validateName()
+  const whatsappErr = validateWhatsApp()
+  liveErrors.value = { client_name: nameErr, client_whatsapp: whatsappErr }
+  if (nameErr || whatsappErr || quantityError.value) return
+
   validateDate()
   if (errors.value.event_date) return
 
@@ -253,12 +284,13 @@ async function submit() {
               type="text"
               required
               placeholder="Tu nombre"
-              @input="form.client_name = $event.target.value.replace(/[0-9]/g, '')"
+              @input="form.client_name = $event.target.value.replace(/[0-9]/g, ''); liveErrors.client_name = validateName()"
               class="w-full px-4 py-3 rounded-xl bg-cream border-2 text-sm text-secondary placeholder-stone-300
                      transition-colors outline-none focus:border-primary focus:shadow-[0_0_0_3px_rgba(234,179,8,0.15)]"
-              :class="errors.client_name ? 'border-red-300' : 'border-primary/15'"
+              :class="liveErrors.client_name || errors.client_name ? 'border-red-300' : 'border-primary/15'"
             />
-            <p v-if="errors.client_name" class="text-red-500 text-xs mt-1">{{ errors.client_name }}</p>
+            <p v-if="liveErrors.client_name" class="text-red-500 text-xs mt-1">{{ liveErrors.client_name }}</p>
+            <p v-else-if="errors.client_name" class="text-red-500 text-xs mt-1">{{ errors.client_name }}</p>
           </div>
 
           <!-- WhatsApp -->
@@ -271,12 +303,13 @@ async function submit() {
               pattern="[0-9+\-\s]*"
               required
               placeholder="Ej: +54 9 11 1234-5678"
-              @input="form.client_whatsapp = $event.target.value.replace(/[^0-9+\-\s]/g, '')"
+              @input="form.client_whatsapp = $event.target.value.replace(/[^0-9+\-\s]/g, ''); liveErrors.client_whatsapp = validateWhatsApp()"
               class="w-full px-4 py-3 rounded-xl bg-cream border-2 text-sm text-secondary placeholder-stone-300
                      transition-colors outline-none focus:border-primary focus:shadow-[0_0_0_3px_rgba(234,179,8,0.15)]"
-              :class="errors.client_whatsapp ? 'border-red-300' : 'border-primary/15'"
+              :class="liveErrors.client_whatsapp || errors.client_whatsapp ? 'border-red-300' : 'border-primary/15'"
             />
-            <p v-if="errors.client_whatsapp" class="text-red-500 text-xs mt-1">{{ errors.client_whatsapp }}</p>
+            <p v-if="liveErrors.client_whatsapp" class="text-red-500 text-xs mt-1">{{ liveErrors.client_whatsapp }}</p>
+            <p v-else-if="errors.client_whatsapp" class="text-red-500 text-xs mt-1">{{ errors.client_whatsapp }}</p>
           </div>
 
           <!-- Fecha y Horario -->
@@ -315,17 +348,19 @@ async function submit() {
           <!-- Cantidad y Tipo -->
           <div class="grid grid-cols-2 gap-3">
             <div>
-              <label class="block text-xs font-semibold text-secondary/60 mb-1.5 uppercase tracking-wide">Personas (min. 100) *</label>
+              <label class="block text-xs font-semibold text-secondary/60 mb-1.5 uppercase tracking-wide">Personas (máx. 100) *</label>
               <input
                 v-model.number="form.quantity"
                 type="number"
-                min="100"
+                min="1"
+                max="100"
                 required
                 class="w-full px-4 py-3 rounded-xl bg-cream border-2 text-sm text-secondary
                        transition-colors outline-none focus:border-primary focus:shadow-[0_0_0_3px_rgba(234,179,8,0.15)]"
-                :class="errors.quantity ? 'border-red-300' : 'border-primary/15'"
+                :class="quantityError || errors.quantity ? 'border-red-300' : 'border-primary/15'"
               />
-              <p v-if="errors.quantity" class="text-red-500 text-xs mt-1">{{ errors.quantity }}</p>
+              <p v-if="quantityError" class="text-red-500 text-xs mt-1">{{ quantityError }}</p>
+              <p v-else-if="errors.quantity" class="text-red-500 text-xs mt-1">{{ errors.quantity }}</p>
             </div>
             <div>
               <label class="block text-xs font-semibold text-secondary/60 mb-1.5 uppercase tracking-wide">Tipo de evento *</label>
@@ -485,7 +520,60 @@ async function submit() {
           </div>
         </div>
 
-        <!-- Botón enviar -->
+        <!-- Modalidad de pago -->
+        <div class="bg-white rounded-2xl border border-primary/10 p-5 space-y-3">
+          <h2 class="font-display font-bold text-base text-secondary">
+            Modalidad de pago
+          </h2>
+          <p class="text-xs text-secondary/50">Elegí cómo querés abonar el pedido:</p>
+          <label
+            class="flex items-center gap-3 p-4 rounded-xl border-2 cursor-pointer transition-all"
+            :class="form.payment_plan === 'deposit'
+              ? 'border-primary bg-primary/5'
+              : 'border-primary/10 hover:border-primary/25'"
+          >
+            <input
+              v-model="form.payment_plan"
+              type="radio"
+              value="deposit"
+              class="sr-only"
+            />
+            <span
+              class="w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 transition-colors"
+              :class="form.payment_plan === 'deposit' ? 'border-primary bg-primary' : 'border-stone-300'"
+            >
+              <span v-if="form.payment_plan === 'deposit'" class="w-2 h-2 rounded-full bg-white" />
+            </span>
+            <div>
+              <p class="text-sm font-semibold text-secondary">Seña del 50%</p>
+              <p class="text-[11px] text-stone-400">Abonás la mitad al confirmar y el resto antes del evento</p>
+            </div>
+          </label>
+          <label
+            class="flex items-center gap-3 p-4 rounded-xl border-2 cursor-pointer transition-all"
+            :class="form.payment_plan === 'full'
+              ? 'border-primary bg-primary/5'
+              : 'border-primary/10 hover:border-primary/25'"
+          >
+            <input
+              v-model="form.payment_plan"
+              type="radio"
+              value="full"
+              class="sr-only"
+            />
+            <span
+              class="w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 transition-colors"
+              :class="form.payment_plan === 'full' ? 'border-primary bg-primary' : 'border-stone-300'"
+            >
+              <span v-if="form.payment_plan === 'full'" class="w-2 h-2 rounded-full bg-white" />
+            </span>
+            <div>
+              <p class="text-sm font-semibold text-secondary">Pago total</p>
+              <p class="text-[11px] text-stone-400">Abonás el 100% en un solo pago</p>
+            </div>
+          </label>
+        </div>
+
         <button
           type="submit"
           :disabled="sending || selectedCount === 0"

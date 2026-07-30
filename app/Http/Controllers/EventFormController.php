@@ -38,7 +38,7 @@ class EventFormController extends Controller
             'client_name' => 'required|string|max:255',
             'client_whatsapp' => 'required|string|max:255',
             'event_date' => 'required|date|after_or_equal:' . now()->addDays(15)->format('Y-m-d'),
-            'quantity' => 'required|integer|min:100',
+            'quantity' => 'required|integer|max:100',
             'pickup_time' => 'required|string|max:255',
             'event_type' => 'required|string|max:255',
             'color' => 'required|string|max:255',
@@ -46,6 +46,7 @@ class EventFormController extends Controller
             'push_endpoint' => 'nullable|string',
             'products' => 'required|array|min:1',
             'products.*.id' => 'required|exists:products,id',
+            'payment_plan' => 'nullable|in:deposit,full',
         ]);
 
         $eventDate = Carbon::parse($validated['event_date']);
@@ -78,6 +79,8 @@ class EventFormController extends Controller
             ])->withInput();
         }
 
+        $depositPaid = ($validated['payment_plan'] ?? 'deposit') === 'full';
+
         $event = Event::create([
             'client_name' => $validated['client_name'],
             'client_whatsapp' => $validated['client_whatsapp'],
@@ -88,6 +91,8 @@ class EventFormController extends Controller
             'color' => $validated['color'],
             'notes' => $validated['notes'] ?? null,
             'push_endpoint' => $validated['push_endpoint'] ?? null,
+            'total' => 0,
+            'deposit_paid' => $depositPaid,
         ]);
 
         foreach ($validated['products'] as $product) {
@@ -110,16 +115,19 @@ class EventFormController extends Controller
             return "- {$p->name}";
         })->implode("\n");
 
+        $paymentLabel = $event->deposit_paid ? 'Pago total (100%)' : 'Seña del 50%';
+
         $message = "¡Hola Lily! 🎉 Quiero solicitar un evento:\n\n"
             . "👤 *Cliente:* {$event->client_name}\n"
             . "📱 *WhatsApp:* {$event->client_whatsapp}\n"
             . "📅 *Fecha:* {$date}\n"
             . "🕐 *Horario de retiro:* {$event->pickup_time}\n"
-            . "👥 *Cantidad de personas:* {$event->quantity}\n"
+            . "👥 *Cantidad de personas:* {$event->quantity} (máx.)\n"
             . "🎊 *Tipo de evento:* {$event->event_type}\n"
             . "🎨 *Color:* {$event->color}\n"
             . ($event->notes ? "📝 *Observaciones:* {$event->notes}\n" : "")
             . "\n🛍️ *Productos:*\n{$productsList}\n\n"
+            . "💵 *Modalidad de pago:* {$paymentLabel}\n"
             . "Quedo a la espera del presupuesto! 😊";
 
         return "https://wa.me/{$phone}?text=" . urlencode($message);

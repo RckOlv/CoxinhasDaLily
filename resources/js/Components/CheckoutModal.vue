@@ -25,7 +25,6 @@ const form = ref({
 const paymentMethods = [
   { value: 'efectivo', label: 'Efectivo' },
   { value: 'transferencia', label: 'Transferencia' },
-  { value: 'mercadopago', label: 'MercadoPago' },
 ]
 
 const showErrors = ref(false)
@@ -252,7 +251,7 @@ async function confirm() {
                   </span>
                   <div>
                     <p class="text-sm font-semibold text-secondary">Envío</p>
-                    <p class="text-[10px] text-stone-400">Coordiná el traslado (Uber, etc.)</p>
+                    <p class="text-[10px] text-stone-400">Coordiná el traslado (Uber, Didi, etc.)</p>
                   </div>
                 </label>
               </div>
@@ -273,7 +272,14 @@ async function confirm() {
               <p v-if="showErrors && form.delivery_method === 'envio' && !form.address.trim()" class="text-xs text-red-400 mt-1">
                 Ingresá tu dirección
               </p>
-              <p class="text-[11px] text-stone-400 mt-1.5">⚠️ Coordiná el traslado con un servicio de transporte (Uber, motocaixo, etc.). El envío no está incluido en el precio.</p>
+              <p class="text-[11px] text-red-500 font-medium mt-1.5 flex items-start gap-1.5">
+                <svg class="w-3.5 h-3.5 text-red-500 mt-0.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+                  <line x1="12" y1="9" x2="12" y2="13" />
+                  <line x1="12" y1="17" x2="12.01" y2="17" />
+                </svg>
+                <span>Coordiná el traslado con Uber, Didi, etc. El envío <strong>no está incluido</strong> en el precio.</span>
+              </p>
             </div>
 
             <!-- Método de pago -->
