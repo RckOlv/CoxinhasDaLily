@@ -45,6 +45,7 @@ function validateWhatsApp() {
   if (!v) return 'El WhatsApp es obligatorio'
   const digits = v.replace(/\D/g, '')
   if (digits.length < 10) return 'El número debe tener al menos 10 dígitos'
+  if (digits.length > 15) return 'El número no puede tener más de 15 dígitos'
   return null
 }
 
@@ -303,7 +304,8 @@ async function submit() {
               pattern="[0-9+\-\s]*"
               required
               placeholder="Ej: +54 9 11 1234-5678"
-              @input="form.client_whatsapp = $event.target.value.replace(/[^0-9+\-\s]/g, ''); liveErrors.client_whatsapp = validateWhatsApp()"
+              maxlength="18"
+              @input="form.client_whatsapp = $event.target.value.replace(/[^0-9+\-\s]/g, '').slice(0, 18); liveErrors.client_whatsapp = validateWhatsApp()"
               class="w-full px-4 py-3 rounded-xl bg-cream border-2 text-sm text-secondary placeholder-stone-300
                      transition-colors outline-none focus:border-primary focus:shadow-[0_0_0_3px_rgba(234,179,8,0.15)]"
               :class="liveErrors.client_whatsapp || errors.client_whatsapp ? 'border-red-300' : 'border-primary/15'"
