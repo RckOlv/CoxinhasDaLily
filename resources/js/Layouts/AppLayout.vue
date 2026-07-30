@@ -100,6 +100,19 @@ onBeforeUnmount(() => {
           >
             Eventos
           </Link>
+          <a
+            href="/#cursos"
+            class="px-4 py-2 rounded-xl text-sm font-semibold transition-colors"
+            :class="
+              isHome
+                ? (scrolled
+                    ? 'text-stone-400 hover:text-secondary hover:bg-primary/5'
+                    : 'text-white/70 hover:text-white hover:bg-white/10')
+                : 'text-stone-400 hover:text-secondary hover:bg-primary/5'
+            "
+          >
+            Cursos
+          </a>
           <Link
             href="/admin"
             class="px-4 py-2 rounded-xl text-sm font-semibold transition-colors"
