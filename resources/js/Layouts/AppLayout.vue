@@ -4,6 +4,7 @@ import { Link, usePage } from '@inertiajs/vue3'
 import { useCart } from '@/Composables/useCart'
 import CartOffcanvas from '@/Components/CartOffcanvas.vue'
 import PushSubscribe from '@/Components/PushSubscribe.vue'
+import Reveal from '@/Components/Reveal.vue'
 
 const { itemCount } = useCart()
 const showCart = ref(false)
@@ -400,6 +401,7 @@ onBeforeUnmount(() => {
     </nav>
 
     <!-- Footer -->
+    <Reveal>
     <footer v-if="!isAdmin" class="bg-cream border-t border-primary/10 pb-20 lg:pb-0">
       <div class="max-w-5xl mx-auto px-5 py-10 sm:py-12">
         <!-- Logo centrado -->
@@ -462,6 +464,7 @@ onBeforeUnmount(() => {
         </div>
       </div>
     </footer>
+    </Reveal>
 
     <!-- Botón flotante de WhatsApp -->
     <a

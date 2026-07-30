@@ -3,6 +3,7 @@ import { ref, computed } from 'vue'
 import AppLayout from '@/Layouts/AppLayout.vue'
 import CategoryFilter from '@/Components/CategoryFilter.vue'
 import ProductCard from '@/Components/ProductCard.vue'
+import Reveal from '@/Components/Reveal.vue'
 
 const props = defineProps({
   categories: { type: Array, required: true },
@@ -61,12 +62,17 @@ function onCategorySelect(catId) {
         v-if="filteredProducts.length > 0"
         class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6"
       >
-        <ProductCard
-          v-for="product in filteredProducts"
+        <div
+          v-for="(product, i) in filteredProducts"
           :key="product.id"
-          :product="product"
-          :badge="product.badge"
-        />
+        >
+          <Reveal :delay="i * 80">
+            <ProductCard
+              :product="product"
+              :badge="product.badge"
+            />
+          </Reveal>
+        </div>
       </div>
 
       <!-- Empty state -->

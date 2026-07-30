@@ -41,7 +41,7 @@ function formatPrice(value) {
 </script>
 
 <template>
-  <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-primary/8 flex flex-col transition-shadow active:shadow-md">
+  <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-primary/8 flex flex-col card-hover">
     <!-- Imagen -->
     <div
       class="relative aspect-square bg-cream-dark overflow-hidden"

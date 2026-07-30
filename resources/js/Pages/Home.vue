@@ -2,6 +2,7 @@
 import { ref, onMounted, onBeforeUnmount } from 'vue'
 import { Link, usePage } from '@inertiajs/vue3'
 import AppLayout from '@/Layouts/AppLayout.vue'
+import Reveal from '@/Components/Reveal.vue'
 
 const { whatsapp_number, gallery_images, videos: dbVideos } = usePage().props
 
@@ -186,6 +187,7 @@ onBeforeUnmount(() => {
     </section>
 
     <!-- ¿Quiénes somos? -->
+    <Reveal>
     <section class="bg-cream py-12 sm:py-16">
       <div class="max-w-5xl mx-auto px-5 sm:px-6 lg:px-8">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-center">
@@ -212,14 +214,16 @@ onBeforeUnmount(() => {
         </div>
       </div>
     </section>
+    </Reveal>
 
     <!-- Videos de producción -->
+    <Reveal>
     <section class="bg-secondary py-12 sm:py-16">
       <div class="max-w-5xl mx-auto px-5 sm:px-6 lg:px-8">
-        <h2 class="font-display font-bold text-xl sm:text-2xl text-white text-center mb-2 animate-fade-in-up">
+        <h2 class="font-display font-bold text-xl sm:text-2xl text-white text-center mb-2">
           Detrás de escena
         </h2>
-        <p class="text-white/60 text-sm text-center mb-1 animate-fade-in-up delay-100">
+        <p class="text-white/60 text-sm text-center mb-1">
           Mirá cómo preparamos todo con amor
         </p>
         <p v-if="videos.length > 2" class="text-xs text-white/25 text-center mb-5 lg:hidden">
@@ -230,7 +234,7 @@ onBeforeUnmount(() => {
             v-for="(video, vi) in videos"
             :key="video.src"
             class="group rounded-2xl overflow-hidden bg-secondary-dark relative
-                   transition-all duration-300 hover:shadow-xl animate-fade-in-up
+                   transition-all duration-300 hover:shadow-xl
                    shrink-0 w-[70%] sm:w-auto snap-center cursor-pointer"
             @click="openVideo(vi)"
           >
@@ -277,11 +281,13 @@ onBeforeUnmount(() => {
         </div>
       </div>
     </section>
+    </Reveal>
 
     <!-- Galería -->
+    <Reveal>
     <section class="bg-cream-dark py-12 sm:py-16">
       <div class="max-w-5xl mx-auto px-5 sm:px-6 lg:px-8">
-        <h2 class="font-display font-bold text-xl sm:text-2xl text-secondary text-center mb-2 animate-fade-in-up">
+        <h2 class="font-display font-bold text-xl sm:text-2xl text-secondary text-center mb-2">
           Nuestros productos
         </h2>
         <p v-if="galleryImages.length > 2" class="text-xs text-secondary/30 text-center mb-5 lg:hidden">
@@ -292,8 +298,8 @@ onBeforeUnmount(() => {
             v-for="(img, i) in galleryImages"
             :key="img.src"
             class="rounded-2xl overflow-hidden border border-primary/10 shadow-sm cursor-pointer
-                   transition-all duration-300 hover:shadow-md hover:border-primary/25 animate-fade-in-up"
-            :style="{ animationDelay: `${i * 80}ms` }"
+                   transition-all duration-300 hover:shadow-md hover:border-primary/25"
+
             @click="openImage(i)"
           >
             <img
@@ -306,6 +312,7 @@ onBeforeUnmount(() => {
         </div>
       </div>
     </section>
+    </Reveal>
 
     <!-- Image Lightbox -->
     <Teleport to="body">
@@ -441,6 +448,7 @@ onBeforeUnmount(() => {
     </Teleport>
 
     <!-- Sección Eventos -->
+    <Reveal>
     <section class="bg-cream py-14 sm:py-20">
       <div class="max-w-lg mx-auto px-5 text-center">
         <div class="w-16 h-16 mx-auto rounded-2xl bg-primary/15 flex items-center justify-center mb-5">
@@ -474,8 +482,10 @@ onBeforeUnmount(() => {
         </Link>
       </div>
     </section>
+    </Reveal>
 
     <!-- Sección Cursos -->
+    <Reveal>
     <section id="cursos" class="bg-cream py-14 sm:py-20">
       <div class="max-w-lg mx-auto px-5 text-center">
         <div class="w-16 h-16 mx-auto rounded-2xl bg-primary/15 flex items-center justify-center mb-5">
@@ -508,17 +518,19 @@ onBeforeUnmount(() => {
         </a>
       </div>
     </section>
+    </Reveal>
 
     <!-- CTA Final -->
+    <Reveal>
     <section class="bg-cream py-12 sm:py-16">
       <div class="max-w-lg mx-auto px-5 text-center">
-        <h2 class="font-display font-bold text-xl sm:text-2xl text-secondary mb-2 animate-fade-in-up">
+        <h2 class="font-display font-bold text-xl sm:text-2xl text-secondary mb-2">
           ¿Te antojaste?
         </h2>
-        <p class="text-secondary/60 text-sm mb-6 animate-fade-in-up delay-100">
+        <p class="text-secondary/60 text-sm mb-6">
           Mirá todo lo que tenemos preparado para vos.
         </p>
-        <div class="flex flex-col sm:flex-row gap-3 animate-fade-in-up delay-200">
+        <div class="flex flex-col sm:flex-row gap-3">
           <Link
             href="/productos"
             class="flex-1 py-4 rounded-2xl bg-primary text-secondary font-display font-bold text-base
@@ -545,5 +557,6 @@ onBeforeUnmount(() => {
         </div>
       </div>
     </section>
+    </Reveal>
   </AppLayout>
 </template>
