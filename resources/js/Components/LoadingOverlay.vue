@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, onBeforeUnmount, ref, watch } from 'vue'
+import { onBeforeUnmount, ref, watch } from 'vue'
 import lottie from 'lottie-web'
 
 const props = defineProps({
@@ -11,7 +11,8 @@ const props = defineProps({
 const animationRef = ref(null)
 let animation = null
 
-onMounted(() => {
+const ensureAnimation = () => {
+  if (animation || !animationRef.value) return
   animation = lottie.loadAnimation({
     container: animationRef.value,
     renderer: 'svg',
@@ -19,21 +20,24 @@ onMounted(() => {
     autoplay: true,
     path: '/img/Beef-Burger.json',
   })
-})
-
-onBeforeUnmount(() => {
-  animation?.destroy()
-})
+}
 
 watch(
   () => props.loading,
   (val) => {
-    if (animation) {
-      if (val) animation.play()
-      else animation.stop()
+    if (val) {
+      ensureAnimation()
+      animation?.play()
+    } else {
+      animation?.stop()
     }
   },
+  { flush: 'post' },
 )
+
+onBeforeUnmount(() => {
+  animation?.destroy()
+})
 </script>
 
 <template>
