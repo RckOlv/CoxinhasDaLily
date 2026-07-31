@@ -1,9 +1,39 @@
 <script setup>
-defineProps({
+import { onMounted, onBeforeUnmount, ref, watch } from 'vue'
+import lottie from 'lottie-web'
+
+const props = defineProps({
   loading: { type: Boolean, default: false },
   mainText: { type: String, default: 'Subiendo archivos...' },
   subText: { type: String, default: 'Preparando todo...' },
 })
+
+const animationRef = ref(null)
+let animation = null
+
+onMounted(() => {
+  animation = lottie.loadAnimation({
+    container: animationRef.value,
+    renderer: 'svg',
+    loop: true,
+    autoplay: true,
+    path: '/img/Beef-Burger.json',
+  })
+})
+
+onBeforeUnmount(() => {
+  animation?.destroy()
+})
+
+watch(
+  () => props.loading,
+  (val) => {
+    if (animation) {
+      if (val) animation.play()
+      else animation.stop()
+    }
+  },
+)
 </script>
 
 <template>
@@ -19,14 +49,7 @@ defineProps({
         class="fixed inset-0 z-[9999] flex flex-col items-center justify-center"
         style="background: rgba(0, 0, 0, 0.45); backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px)"
       >
-        <video
-          src="/videos/coxinha-loader.mp4"
-          autoplay
-          loop
-          muted
-          playsinline
-          class="loader-video"
-        />
+        <div ref="animationRef" class="loader-animation" />
         <p class="loader-text-main">{{ mainText }}</p>
         <p class="loader-text-sub">{{ subText }}</p>
       </div>
@@ -44,11 +67,9 @@ defineProps({
   opacity: 0;
 }
 
-.loader-video {
+.loader-animation {
   width: 240px;
   height: 240px;
-  object-fit: contain;
-  mix-blend-mode: screen;
 }
 
 .loader-text-main {
