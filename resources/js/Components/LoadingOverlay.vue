@@ -45,8 +45,8 @@ defineProps({
 }
 
 .loader-video {
-  width: 140px;
-  height: 140px;
+  width: 240px;
+  height: 240px;
   object-fit: contain;
 }
 
