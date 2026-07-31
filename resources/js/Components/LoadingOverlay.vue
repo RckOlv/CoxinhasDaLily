@@ -1,45 +1,8 @@
 <script setup>
-import { ref, watch, onBeforeUnmount } from 'vue'
-import lottie from 'lottie-web'
-
-const props = defineProps({
+defineProps({
   loading: { type: Boolean, default: false },
   mainText: { type: String, default: 'Subiendo archivos...' },
   subText: { type: String, default: 'Preparando todo...' },
-})
-
-const animContainer = ref(null)
-let anim = null
-
-function startAnimation() {
-  if (anim || !animContainer.value) return
-  anim = lottie.loadAnimation({
-    container: animContainer.value,
-    renderer: 'svg',
-    loop: true,
-    autoplay: true,
-    path: '/img/Beef-Burger.json',
-  })
-}
-
-function stopAnimation() {
-  anim?.destroy()
-  anim = null
-}
-
-watch(
-  () => props.loading,
-  (loading) => {
-    if (loading) {
-      requestAnimationFrame(startAnimation)
-    } else {
-      stopAnimation()
-    }
-  }
-)
-
-onBeforeUnmount(() => {
-  stopAnimation()
 })
 </script>
 
@@ -56,7 +19,14 @@ onBeforeUnmount(() => {
         class="fixed inset-0 z-[9999] flex flex-col items-center justify-center"
         style="background: rgba(0, 0, 0, 0.45); backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px)"
       >
-        <div ref="animContainer" class="loader-lottie" />
+        <video
+          src="/videos/coxinha-loader.mp4"
+          autoplay
+          loop
+          muted
+          playsinline
+          class="loader-video"
+        />
         <p class="loader-text-main">{{ mainText }}</p>
         <p class="loader-text-sub">{{ subText }}</p>
       </div>
@@ -74,9 +44,10 @@ onBeforeUnmount(() => {
   opacity: 0;
 }
 
-.loader-lottie {
-  width: 120px;
-  height: 120px;
+.loader-video {
+  width: 140px;
+  height: 140px;
+  object-fit: contain;
 }
 
 .loader-text-main {
