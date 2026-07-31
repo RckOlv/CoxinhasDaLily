@@ -152,7 +152,6 @@ function formatSize(bytes) {
             </div>
             <div class="flex-1 min-w-0">
               <p class="text-sm font-semibold text-secondary truncate">{{ video.title || 'Sin título' }}</p>
-              <p class="text-[10px] text-secondary/30">{{ video.video_path }}</p>
             </div>
             <div class="flex items-center gap-2">
               <button
