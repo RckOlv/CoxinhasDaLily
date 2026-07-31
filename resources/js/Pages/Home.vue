@@ -214,8 +214,8 @@ onBeforeUnmount(() => {
               ¿Quién soy?
             </h2>
             <p class="text-secondary/70 text-sm sm:text-base leading-relaxed">
-              Hace años traigo los sabores de mi tierra. Preparo tandas frescas todos los días
-              para que tengas lo mejor en tu freezer o en tus eventos.
+              Soy Liliana, emprendedora. Hubo un tiempo en el que necesitaba ayudar a sostener los gastos de mi hogar, y fue entonces, orando y buscando una salida, que encontré la idea de preparar coxinhas. Lo que empezó como un pequeño emprendimiento hecho con amor en mi cocina, pronto se transformó en algo que jamás imaginé: un verdadero éxito en toda la provincia de Misiones, llegando a cientos de familias, eventos y comercios.
+              Hoy sigo trabajando con la misma pasión del primer día, elaborando cada producto con calidad, compromiso y mucho amor. Mi mayor alegría es saber que detrás de cada pedido hay personas que confían en mi trabajo. ¡Gracias por ser parte de esta historia!
             </p>
           </div>
         </div>
