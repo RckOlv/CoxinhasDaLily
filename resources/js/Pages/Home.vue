@@ -295,7 +295,7 @@ onBeforeUnmount(() => {
     <section class="bg-cream-dark py-12 sm:py-16">
       <div class="max-w-5xl mx-auto px-5 sm:px-6 lg:px-8">
         <h2 class="font-display font-bold text-xl sm:text-2xl text-secondary text-center mb-2">
-          Nuestros productos
+          Conocé algunas de nuestras especialidades
         </h2>
         <p v-if="galleryImages.length > 2" class="text-xs text-secondary/30 text-center mb-5 lg:hidden">
           ← Deslizá para ver más →
