@@ -33,7 +33,7 @@ const videos = dbVideos.map(v => ({
 }))
 
 const courseFeatures = [
-  'La masa de coxinha y de ahí varias opciones: pollo, carne, jamón y queso',
+  'De una misma masa, aprenderás a hacer más de 3 tipos de salados con diferentes sabores',
   'Empanaditas, banderines de salchicha, arrolladitos, bombas de queso y pastelón brasilero',
   'Además de freír, te enseño a vender congelados para tus clientes',
   'Te llega un ebook completo',
