@@ -85,7 +85,7 @@ onBeforeUnmount(() => {
                 : ($page.url === '/productos' ? 'bg-primary/15 text-secondary' : 'text-stone-400 hover:text-secondary hover:bg-primary/5')
             "
           >
-            Productos
+            Catálogo
           </Link>
           <Link
             href="/eventos"
@@ -114,6 +114,7 @@ onBeforeUnmount(() => {
             Cursos
           </a>
           <Link
+            v-if="$page.props.auth?.user"
             href="/admin"
             class="px-4 py-2 rounded-xl text-sm font-semibold transition-colors"
             :class="
@@ -215,7 +216,7 @@ onBeforeUnmount(() => {
             <rect x="3" y="14" width="7" height="7" rx="1" />
             <rect x="14" y="14" width="7" height="7" rx="1" />
           </svg>
-          Productos
+          Catálogo
         </Link>
         <Link
           href="/eventos"

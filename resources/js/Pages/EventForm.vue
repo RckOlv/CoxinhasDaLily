@@ -24,6 +24,7 @@ const form = ref({
 const errors = ref({})
 const liveErrors = ref({})
 const sending = ref(false)
+const showPaymentModal = ref(false)
 
 const quantityError = computed(() => {
   const q = form.value.quantity
@@ -263,10 +264,10 @@ async function submit() {
           </svg>
         </a>
         <h1 class="font-display font-bold text-2xl sm:text-3xl text-white mb-1">
-          ¿Querés que esté en tu evento?
+          ¿Te gustaría contratar nuestros servicios?
         </h1>
         <p class="text-white/60 text-sm max-w-md mx-auto">
-          Armamos el menú ideal para tu cumpleaños, casamiento o evento especial
+          Llevamos el auténtico sabor de Brasil a cumpleaños, casamientos, eventos empresariales y celebraciones
         </p>
       </div>
 
@@ -524,9 +525,24 @@ async function submit() {
 
         <!-- Modalidad de pago -->
         <div class="bg-white rounded-2xl border border-primary/10 p-5 space-y-3">
-          <h2 class="font-display font-bold text-base text-secondary">
-            Modalidad de pago
-          </h2>
+          <div class="flex items-center justify-between">
+            <h2 class="font-display font-bold text-base text-secondary">
+              Modalidad de pago
+            </h2>
+            <button
+              type="button"
+              @click="showPaymentModal = true"
+              class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-50 border border-amber-200 text-xs font-semibold text-amber-800
+                     hover:bg-amber-100 active:scale-[0.98] transition-all"
+            >
+              <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10" />
+                <line x1="12" y1="16" x2="12" y2="12" />
+                <line x1="12" y1="8" x2="12.01" y2="8" />
+              </svg>
+              ¿Cómo funciona?
+            </button>
+          </div>
           <p class="text-xs text-secondary/50">Elegí cómo querés abonar el pedido:</p>
           <label
             class="flex items-center gap-3 p-4 rounded-xl border-2 cursor-pointer transition-all"
@@ -590,6 +606,71 @@ async function submit() {
           {{ sending ? 'Enviando...' : 'Enviar por WhatsApp' }}
         </button>
       </form>
+
+      <!-- Modal Cómo funciona la reserva -->
+      <Teleport to="body">
+        <Transition
+          enter-active-class="transition-opacity duration-200"
+          leave-active-class="transition-opacity duration-200"
+          enter-from-class="opacity-0"
+          leave-to-class="opacity-0"
+        >
+          <div
+            v-if="showPaymentModal"
+            class="fixed inset-0 z-[90] bg-secondary/40 backdrop-blur-sm flex items-end sm:items-center justify-center p-4"
+            @click="showPaymentModal = false"
+          >
+            <div
+              class="bg-white rounded-3xl shadow-2xl w-full max-w-md max-h-[85vh] overflow-y-auto border border-primary/10"
+              @click.stop
+            >
+              <div class="flex items-center justify-between px-5 pt-5 pb-3 border-b border-primary/5">
+                <h2 class="text-lg font-display font-bold text-secondary">¿Cómo funciona la reserva?</h2>
+                <button
+                  @click="showPaymentModal = false"
+                  class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-primary/10 transition-colors"
+                >
+                  <svg class="w-5 h-5 text-stone-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                    <line x1="18" y1="6" x2="6" y2="18" />
+                    <line x1="6" y1="6" x2="18" y2="18" />
+                  </svg>
+                </button>
+              </div>
+              <div class="px-5 py-4 space-y-3">
+                <p class="text-sm text-secondary/70">
+                  Para confirmar tu pedido o evento trabajamos de la siguiente manera:
+                </p>
+                <div class="space-y-2.5">
+                  <div class="flex items-start gap-2.5">
+                    <span class="w-6 h-6 rounded-full bg-green-100 flex items-center justify-center shrink-0 text-green-600 text-xs font-bold">✓</span>
+                    <p class="text-sm text-secondary">Podés reservar abonando una <strong>seña del 50%</strong>.</p>
+                  </div>
+                  <div class="flex items-start gap-2.5">
+                    <span class="w-6 h-6 rounded-full bg-green-100 flex items-center justify-center shrink-0 text-green-600 text-xs font-bold">✓</span>
+                    <p class="text-sm text-secondary">El <strong>50% restante</strong> se paga al momento de la entrega o del evento.</p>
+                  </div>
+                  <div class="flex items-start gap-2.5">
+                    <span class="w-6 h-6 rounded-full bg-green-100 flex items-center justify-center shrink-0 text-green-600 text-xs font-bold">✓</span>
+                    <p class="text-sm text-secondary">También podés pagar el <strong>100%</strong> si lo preferís.</p>
+                  </div>
+                </div>
+                <p class="text-sm text-stone-400 italic bg-cream rounded-xl p-3">
+                  La seña nos permite reservar la fecha y comenzar la preparación de tu pedido.
+                </p>
+              </div>
+              <div class="px-5 pb-5">
+                <button
+                  @click="showPaymentModal = false"
+                  class="w-full py-3 rounded-xl bg-secondary text-cream font-display font-bold text-sm
+                         shadow-md shadow-secondary/20 hover:bg-secondary-dark active:scale-[0.98] transition-all"
+                >
+                  Entendido
+                </button>
+              </div>
+            </div>
+          </div>
+        </Transition>
+      </Teleport>
     </div>
   </AppLayout>
 </template>

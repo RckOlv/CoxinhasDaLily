@@ -32,6 +32,13 @@ const videos = dbVideos.map(v => ({
   title: v.title || 'Video',
 }))
 
+const courseFeatures = [
+  'La masa de coxinha y de ahí varias opciones: pollo, carne, jamón y queso',
+  'Empanaditas, banderines de salchicha, arrolladitos, bombas de queso y pastelón brasilero',
+  'Además de freír, te enseño a vender congelados para tus clientes',
+  'Te llega un ebook completo',
+]
+
 const playingVideos = ref({})
 const videoRefs = ref({})
 
@@ -458,11 +465,10 @@ onBeforeUnmount(() => {
           </svg>
         </div>
         <h2 class="font-display font-bold text-xl sm:text-2xl text-secondary mb-2">
-          ¿Querés que esté en tu evento?
+          ¿Te gustaría contratar nuestros servicios?
         </h2>
         <p class="text-secondary/50 text-sm mb-3 max-w-md mx-auto leading-relaxed">
-          Armamos el menú ideal para tu cumpleaños, casamiento o evento especial.
-          Elegí los productos y te armamos el presupuesto.
+          Llevamos el auténtico sabor de Brasil a cumpleaños, casamientos, eventos empresariales y celebraciones.
         </p>
         <p class="text-secondary/40 text-xs mb-6">
           Máximo 100 personas - Retiro en domicilio
@@ -495,15 +501,23 @@ onBeforeUnmount(() => {
           </svg>
         </div>
         <h2 class="font-display font-bold text-xl sm:text-2xl text-secondary mb-2">
-          ¿Querés aprender a hacerlos?
+          Te enseño todo lo que sé sobre coxinhas
         </h2>
-        <p class="text-secondary/50 text-sm mb-3 max-w-md mx-auto leading-relaxed">
-          Lily enseña todo lo que sabe sobre coxinhas, churros, empanadas y más.
-          Aprendé a hacerlos desde cero con recetas reales que usamos todos los días.
+        <p class="text-secondary/50 text-sm mb-5 max-w-md mx-auto leading-relaxed">
+          7 clases en Instagram privado con el paso a paso para hacer las famosas coxinhas y risolis brasileros.
         </p>
-        <p class="text-secondary/40 text-xs mb-6">
-          Videos a tu ritmo + grupo de WhatsApp para consultas
-        </p>
+        <div class="text-left bg-white rounded-2xl border border-primary/10 p-5 mb-5 space-y-2.5">
+          <p class="text-xs font-semibold text-secondary/60 uppercase tracking-wide mb-1">Qué vas a aprender</p>
+          <div v-for="(item, i) in courseFeatures" :key="i" class="flex items-start gap-2">
+            <svg class="w-4 h-4 text-green-600 mt-0.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12" />
+            </svg>
+            <p class="text-sm text-secondary/70 leading-snug">{{ item }}</p>
+          </div>
+          <p class="text-xs text-secondary/40 mt-3">
+            Instagram privado + ebook completo · Clases a tu ritmo
+          </p>
+        </div>
         <a
           :href="`https://wa.me/${whatsapp_number}?text=Hola%20Lily%2C%20quisiera%20consultar%20por%20los%20cursos`"
           target="_blank"
@@ -516,45 +530,6 @@ onBeforeUnmount(() => {
           </svg>
           Preguntar por los cursos
         </a>
-      </div>
-    </section>
-    </Reveal>
-
-    <!-- CTA Final -->
-    <Reveal>
-    <section class="bg-cream py-12 sm:py-16">
-      <div class="max-w-lg mx-auto px-5 text-center">
-        <h2 class="font-display font-bold text-xl sm:text-2xl text-secondary mb-2">
-          ¿Te antojaste?
-        </h2>
-        <p class="text-secondary/60 text-sm mb-6">
-          Mirá todo lo que tenemos preparado para vos.
-        </p>
-        <div class="flex flex-col sm:flex-row gap-3">
-          <Link
-            href="/productos"
-            class="flex-1 py-4 rounded-2xl bg-primary text-secondary font-display font-bold text-base
-                   shadow-lg shadow-primary/25 hover:scale-105 active:scale-[0.97] transition-all duration-300
-                   flex items-center justify-center gap-2"
-          >
-            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
-              <circle cx="11" cy="11" r="8" />
-              <line x1="21" y1="21" x2="16.65" y2="16.65" />
-            </svg>
-            Hacer Pedido
-          </Link>
-          <Link
-            href="/eventos"
-            class="flex-1 py-4 rounded-2xl border-2 border-secondary/20 text-secondary font-display font-bold text-base
-                   hover:bg-secondary/5 hover:scale-105 active:scale-[0.97] transition-all duration-300
-                   flex items-center justify-center gap-2"
-          >
-            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-              <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z" />
-            </svg>
-            Solicitar Evento
-          </Link>
-        </div>
       </div>
     </section>
     </Reveal>
