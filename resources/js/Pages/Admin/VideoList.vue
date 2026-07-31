@@ -1,6 +1,7 @@
 <script setup>
 import AppLayout from '@/Layouts/AppLayout.vue'
 import AdminHeader from '@/Components/AdminHeader.vue'
+import LoadingOverlay from '@/Components/LoadingOverlay.vue'
 import { Head, useForm, router } from '@inertiajs/vue3'
 import { ref } from 'vue'
 import Swal from 'sweetalert2'
@@ -73,6 +74,7 @@ function formatSize(bytes) {
   <AppLayout>
     <Head title="Videos - Admin" />
     <AdminHeader />
+    <LoadingOverlay :loading="uploading" />
 
     <div class="max-w-5xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
       <!-- Upload -->
