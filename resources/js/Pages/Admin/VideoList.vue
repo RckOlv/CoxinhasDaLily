@@ -74,7 +74,7 @@ function formatSize(bytes) {
   <AppLayout>
     <Head title="Videos - Admin" />
     <AdminHeader />
-    <LoadingOverlay :loading="uploading" />
+    <LoadingOverlay :loading="uploading" main-text="Subiendo videos..." sub-text="Preparando todo..." />
 
     <div class="max-w-5xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
       <!-- Upload -->

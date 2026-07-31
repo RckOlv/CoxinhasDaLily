@@ -20,6 +20,7 @@
         "@inertiajs/vue3": "^3.6.1",
         "@vitejs/plugin-vue": "^6.0.8",
         "axios": "^1.18.1",
+        "lottie-web": "^5.13.0",
         "sweetalert2": "^11.26.25",
         "vue": "^3.5.40"
     }

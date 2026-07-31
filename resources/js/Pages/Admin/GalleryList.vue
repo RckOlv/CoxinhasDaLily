@@ -58,7 +58,7 @@ function removeImage(image) {
   <AppLayout>
     <Head title="Galería - Admin" />
     <AdminHeader />
-    <LoadingOverlay :loading="uploading" />
+    <LoadingOverlay :loading="uploading" main-text="Subiendo fotos..." sub-text="Preparando todo..." />
 
     <div class="max-w-5xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
       <!-- Upload -->
