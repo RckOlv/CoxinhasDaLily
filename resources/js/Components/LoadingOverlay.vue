@@ -48,6 +48,7 @@ defineProps({
   width: 240px;
   height: 240px;
   object-fit: contain;
+  mix-blend-mode: screen;
 }
 
 .loader-text-main {
