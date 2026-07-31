@@ -11,25 +11,21 @@ const props = defineProps({
 const animationRef = ref(null)
 let animation = null
 
-const ensureAnimation = () => {
-  if (animation || !animationRef.value) return
-  animation = lottie.loadAnimation({
-    container: animationRef.value,
-    renderer: 'svg',
-    loop: true,
-    autoplay: true,
-    path: '/img/Beef-Burger.json',
-  })
-}
-
 watch(
   () => props.loading,
   (val) => {
     if (val) {
-      ensureAnimation()
-      animation?.play()
+      animation?.destroy()
+      animation = lottie.loadAnimation({
+        container: animationRef.value,
+        renderer: 'svg',
+        loop: true,
+        autoplay: true,
+        path: '/img/Beef-Burger.json',
+      })
     } else {
-      animation?.stop()
+      animation?.destroy()
+      animation = null
     }
   },
   { flush: 'post' },
