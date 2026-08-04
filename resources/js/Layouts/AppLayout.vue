@@ -4,6 +4,7 @@ import { Link, usePage } from '@inertiajs/vue3'
 import { useCart } from '@/Composables/useCart'
 import CartOffcanvas from '@/Components/CartOffcanvas.vue'
 import PushSubscribe from '@/Components/PushSubscribe.vue'
+import CookieConsent from '@/Components/CookieConsent.vue'
 import Reveal from '@/Components/Reveal.vue'
 
 const { itemCount } = useCart()
@@ -483,8 +484,15 @@ onBeforeUnmount(() => {
             </ul>
         </div>
 
+        <!-- Links legales -->
+        <div class="mt-8 pt-6 border-t border-primary/10 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-center">
+          <Link href="/privacidad" class="text-xs text-secondary/40 hover:text-primary transition-colors">Política de Privacidad</Link>
+          <Link href="/terminos" class="text-xs text-secondary/40 hover:text-primary transition-colors">Términos y Condiciones</Link>
+          <Link href="/cookies" class="text-xs text-secondary/40 hover:text-primary transition-colors">Política de Cookies</Link>
+        </div>
+
         <!-- Copyright -->
-        <div class="mt-8 pt-6 border-t border-primary/10 text-center">
+        <div class="mt-4 text-center">
           <p class="text-xs text-secondary/30">
             &copy; {{ new Date().getFullYear() }} Coxinhas da Lily. Todos los derechos reservados.
           </p>
@@ -513,5 +521,8 @@ onBeforeUnmount(() => {
 
     <!-- Push Notifications -->
     <PushSubscribe />
+
+    <!-- Consentimiento de cookies -->
+    <CookieConsent v-if="!isAdmin" />
   </div>
 </template>

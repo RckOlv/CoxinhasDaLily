@@ -22,14 +22,18 @@
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=fredoka:400,500,600,700|inter:400,500,600,700&display=swap" rel="stylesheet" />
 
-        <!-- Google Analytics -->
+        <!-- Google Analytics (solo se activa con consentimiento) -->
         @if(env('GOOGLE_ANALYTICS_ID'))
         <script async src="https://www.googletagmanager.com/gtag/js?id={{ env('GOOGLE_ANALYTICS_ID') }}"></script>
         <script>
+            window.__GA_ID = "{{ env('GOOGLE_ANALYTICS_ID') }}";
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
-            gtag('config', '{{ env('GOOGLE_ANALYTICS_ID') }}');
+            gtag('consent', 'default', {
+                ad_storage: 'denied',
+                analytics_storage: 'denied',
+            });
         </script>
         @endif
 

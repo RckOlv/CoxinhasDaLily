@@ -9,6 +9,7 @@ use App\Http\Controllers\AdminProductController;
 use App\Http\Controllers\AdminVideoController;
 use App\Http\Controllers\CatalogController;
 use App\Http\Controllers\EventFormController;
+use App\Http\Controllers\LegalController;
 use App\Http\Controllers\PushController;
 use App\Models\GalleryImage;
 use App\Models\Video;
@@ -33,6 +34,10 @@ Route::get('/productos', [CatalogController::class, 'index'])->name('catalog.ind
 
 Route::get('/eventos', [EventFormController::class, 'show'])->name('events.form');
 Route::post('/eventos', [EventFormController::class, 'store'])->name('events.store');
+
+Route::get('/privacidad', [LegalController::class, 'privacy'])->name('legal.privacy');
+Route::get('/terminos', [LegalController::class, 'terms'])->name('legal.terms');
+Route::get('/cookies', [LegalController::class, 'cookies'])->name('legal.cookies');
 
 Route::prefix('admin')->middleware('auth')->group(function () {
     Route::get('/', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
