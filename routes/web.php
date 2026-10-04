@@ -8,6 +8,7 @@ use App\Http\Controllers\AdminOrderController;
 use App\Http\Controllers\AdminProductController;
 use App\Http\Controllers\AdminVideoController;
 use App\Http\Controllers\CatalogController;
+use App\Http\Controllers\CommissionController;
 use App\Http\Controllers\EventFormController;
 use App\Http\Controllers\LegalController;
 use App\Http\Controllers\PushController;
@@ -59,6 +60,10 @@ Route::prefix('admin')->middleware('auth')->group(function () {
 
     Route::get('/pedidos', [AdminOrderController::class, 'index'])->name('admin.orders');
     Route::put('/pedidos/{order}', [AdminOrderController::class, 'update'])->name('admin.orders.update');
+
+    Route::get('/comisiones', [CommissionController::class, 'index'])
+        ->middleware('superadmin')
+        ->name('admin.commissions');
 
     Route::get('/galeria', [AdminGalleryController::class, 'index'])->name('admin.gallery');
     Route::post('/galeria', [AdminGalleryController::class, 'store'])->name('admin.gallery.store');
