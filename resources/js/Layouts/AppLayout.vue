@@ -15,6 +15,7 @@ const page = usePage()
 const isHome = computed(() => page.url === '/')
 const isAdmin = computed(() => page.url.startsWith('/admin'))
 const isSuperAdmin = computed(() => page.props.auth?.role === 'superadmin')
+const adminHome = computed(() => (isSuperAdmin.value ? '/admin/comisiones' : '/admin'))
 const isMoreActive = computed(() => page.url.startsWith('/admin/galeria') || page.url.startsWith('/admin/videos') || page.url.startsWith('/admin/comisiones'))
 
 const scrolled = ref(false)
@@ -247,7 +248,7 @@ onBeforeUnmount(() => {
         </Link>
         <Link
           v-else
-          href="/admin"
+          :href="adminHome"
           class="flex flex-col items-center gap-0.5 px-3 py-1 text-xs font-medium transition-colors"
           :class="$page.url.startsWith('/admin') ? 'text-primary-dark' : 'text-stone-400 hover:text-secondary'"
           translate="no"
@@ -282,6 +283,7 @@ onBeforeUnmount(() => {
     <!-- Bottom Nav Bar Admin (mobile) -->
     <nav v-if="isAdmin" class="fixed bottom-0 left-0 right-0 z-50 bg-secondary border-t border-secondary/80 shadow-[0_-4px_20px_rgba(0,0,0,0.15)] lg:hidden">
       <div class="flex items-center justify-around h-16 max-w-lg mx-auto">
+        <template v-if="!isSuperAdmin">
         <Link
           href="/admin/productos"
           class="flex flex-col items-center gap-0.5 px-3 py-1 text-xs font-medium transition-colors"
@@ -330,6 +332,21 @@ onBeforeUnmount(() => {
           </svg>
           Categorías
         </Link>
+        </template>
+
+        <Link
+          v-if="isSuperAdmin"
+          href="/admin/comisiones"
+          class="flex flex-col items-center gap-0.5 px-3 py-1 text-xs font-medium transition-colors"
+          :class="$page.url.startsWith('/admin/comisiones') ? 'text-primary' : 'text-white/50 hover:text-white'"
+        >
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="9" />
+            <path d="M12 7v10M9.5 9.5c0-1 1.1-1.8 2.5-1.8s2.5.8 2.5 1.8-1.1 1.6-2.5 1.9-2.5.9-2.5 1.9 1.1 1.8 2.5 1.8 2.5-.8 2.5-1.8" />
+          </svg>
+          Comisiones
+        </Link>
+
         <!-- Más (overflow) -->
         <div class="relative">
           <button
@@ -354,6 +371,7 @@ onBeforeUnmount(() => {
               class="absolute bottom-full right-0 mb-2 w-44 bg-white rounded-2xl shadow-2xl border border-primary/10 overflow-hidden"
             >
               <Link
+                v-if="!isSuperAdmin"
                 href="/admin"
                 class="flex items-center gap-3 px-4 py-3 text-sm font-medium transition-colors"
                 :class="$page.url === '/admin' ? 'bg-primary/10 text-secondary' : 'text-secondary/70 hover:bg-cream'"
@@ -376,6 +394,7 @@ onBeforeUnmount(() => {
                 Tienda
               </Link>
               <Link
+                v-if="!isSuperAdmin"
                 href="/admin/galeria"
                 class="flex items-center gap-3 px-4 py-3 text-sm font-medium transition-colors border-t border-primary/5"
                 :class="$page.url.startsWith('/admin/galeria') ? 'bg-primary/10 text-secondary' : 'text-secondary/70 hover:bg-cream'"
@@ -388,6 +407,7 @@ onBeforeUnmount(() => {
                 Galería
               </Link>
               <Link
+                v-if="!isSuperAdmin"
                 href="/admin/videos"
                 class="flex items-center gap-3 px-4 py-3 text-sm font-medium transition-colors border-t border-primary/5"
                 :class="$page.url.startsWith('/admin/videos') ? 'bg-primary/10 text-secondary' : 'text-secondary/70 hover:bg-cream'"

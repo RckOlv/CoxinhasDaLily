@@ -6,12 +6,18 @@ use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class EnsureSuperAdmin
+class EnsureAdminRole
 {
     public function handle(Request $request, Closure $next): Response
     {
-        if ($request->user()?->role !== 'superadmin') {
-            return redirect()->route('admin.orders');
+        $user = $request->user();
+
+        if ($user?->role !== 'admin') {
+            if ($user?->role === 'superadmin') {
+                return redirect()->route('admin.commissions');
+            }
+
+            abort(403);
         }
 
         return $next($request);

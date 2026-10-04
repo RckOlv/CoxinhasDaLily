@@ -41,6 +41,13 @@ Route::get('/terminos', [LegalController::class, 'terms'])->name('legal.terms');
 Route::get('/cookies', [LegalController::class, 'cookies'])->name('legal.cookies');
 
 Route::prefix('admin')->middleware('auth')->group(function () {
+    Route::get('/comisiones', [CommissionController::class, 'index'])
+        ->middleware('superadmin')
+        ->name('admin.commissions');
+});
+
+// Panel operativo: sólo para el rol 'admin'. El socio usa /admin/comisiones.
+Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
     Route::get('/', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
 
     Route::get('/productos', [AdminProductController::class, 'index'])->name('admin.products');
@@ -60,10 +67,6 @@ Route::prefix('admin')->middleware('auth')->group(function () {
 
     Route::get('/pedidos', [AdminOrderController::class, 'index'])->name('admin.orders');
     Route::put('/pedidos/{order}', [AdminOrderController::class, 'update'])->name('admin.orders.update');
-
-    Route::get('/comisiones', [CommissionController::class, 'index'])
-        ->middleware('superadmin')
-        ->name('admin.commissions');
 
     Route::get('/galeria', [AdminGalleryController::class, 'index'])->name('admin.gallery');
     Route::post('/galeria', [AdminGalleryController::class, 'store'])->name('admin.gallery.store');
