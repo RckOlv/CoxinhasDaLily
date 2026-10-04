@@ -1,10 +1,13 @@
 <script setup>
-import { Head, usePage } from '@inertiajs/vue3'
+import { computed } from 'vue'
+import { Head, router, usePage } from '@inertiajs/vue3'
 import AppLayout from '@/Layouts/AppLayout.vue'
 import AdminHeader from '@/Components/AdminHeader.vue'
 
 const props = defineProps({
   monthLabel: String,
+  month: Number,
+  year: Number,
   totalOrders: Number,
   totalEvents: Number,
   totalSales: Number,
@@ -14,12 +17,27 @@ const props = defineProps({
 
 const { appName } = usePage().props
 
+const selectedMonth = computed(() => {
+  const mm = String(props.month).padStart(2, '0')
+  return `${props.year}-${mm}`
+})
+
 function formatPrice(value) {
   return new Intl.NumberFormat('es-AR', {
     style: 'currency',
     currency: 'ARS',
     minimumFractionDigits: 2,
   }).format(value)
+}
+
+function filterByMonth(event) {
+  const [year, month] = event.target.value.split('-')
+
+  router.get(
+    '/admin/comisiones',
+    { month: Number(month), year: Number(year) },
+    { preserveState: true, preserveScroll: true, replace: true }
+  )
 }
 </script>
 
@@ -32,10 +50,25 @@ function formatPrice(value) {
 
       <div class="bg-secondary py-4 px-5 text-center">
         <h1 class="font-display font-bold text-lg text-white">Mis Comisiones</h1>
-        <p class="text-white/50 text-xs mt-1 capitalize">{{ monthLabel }}</p>
+        <p class="text-white/50 text-xs mt-1">{{ monthLabel }}</p>
       </div>
 
       <div class="px-5 pt-4 space-y-3">
+
+        <!-- Filtro de mes -->
+        <div class="bg-white rounded-2xl border border-primary/10 p-4 flex items-center gap-3">
+          <svg class="w-5 h-5 text-secondary/40 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+            <line x1="16" y1="2" x2="16" y2="6" /><line x1="8" y1="2" x2="8" y2="6" />
+            <line x1="3" y1="10" x2="21" y2="10" />
+          </svg>
+          <input
+            type="month"
+            :value="selectedMonth"
+            @change="filterByMonth"
+            class="flex-1 min-w-0 bg-transparent text-sm font-semibold text-secondary focus:outline-none"
+          />
+        </div>
 
         <!-- Comisión destacada -->
         <div class="rounded-2xl bg-green-600 text-white p-6 shadow-lg shadow-green-600/25">
@@ -92,7 +125,7 @@ function formatPrice(value) {
         </div>
 
         <p class="text-[11px] text-secondary/40 text-center leading-relaxed px-4">
-          Sólo se cuentan pedidos y eventos marcados como <strong>entregados</strong> en el mes en curso.
+          Sólo se cuentan pedidos y eventos marcados como <strong>entregados</strong> en {{ monthLabel }}.
         </p>
       </div>
     </div>
