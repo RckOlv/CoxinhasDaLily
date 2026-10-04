@@ -56,7 +56,7 @@ function filterByMonth(event) {
       <div class="px-5 pt-4 space-y-3">
 
         <!-- Filtro de mes -->
-        <div class="bg-white rounded-2xl border border-primary/10 p-4 flex items-center gap-3">
+        <div class="bg-white rounded-2xl border border-primary/10 p-4 flex items-center justify-center gap-3">
           <svg class="w-5 h-5 text-secondary/40 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
             <line x1="16" y1="2" x2="16" y2="6" /><line x1="8" y1="2" x2="8" y2="6" />
@@ -66,7 +66,7 @@ function filterByMonth(event) {
             type="month"
             :value="selectedMonth"
             @change="filterByMonth"
-            class="flex-1 min-w-0 bg-transparent text-sm font-semibold text-secondary focus:outline-none"
+            class="w-48 max-w-full bg-transparent text-sm font-semibold text-secondary focus:outline-none"
           />
         </div>
 
