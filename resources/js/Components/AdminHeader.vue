@@ -1,9 +1,12 @@
 <script setup>
+import { computed } from 'vue'
 import { Link, usePage } from '@inertiajs/vue3'
 
 const page = usePage()
 
-const tabs = [
+const isSuperAdmin = computed(() => page.props.auth?.role === 'superadmin')
+
+const baseTabs = [
   { href: '/admin', label: 'Panel', icon: 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6' },
   { href: '/admin/productos', label: 'Productos', icon: 'M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4' },
   { href: '/admin/categorias', label: 'Categorías', icon: 'M4 6h16M4 10h16M4 14h16M4 18h16' },
@@ -12,6 +15,12 @@ const tabs = [
   { href: '/admin/galeria', label: 'Galería', icon: 'M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z' },
   { href: '/admin/videos', label: 'Videos', icon: 'M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z' },
 ]
+
+const commissionTab = { href: '/admin/comisiones', label: 'Comisiones', icon: 'M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z' }
+
+const tabs = computed(() =>
+  isSuperAdmin.value ? [...baseTabs, commissionTab] : baseTabs
+)
 
 function isActive(href) {
   if (href === '/admin') return page.url === '/admin'

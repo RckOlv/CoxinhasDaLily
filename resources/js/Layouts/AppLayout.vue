@@ -14,7 +14,8 @@ const showAdminMore = ref(false)
 const page = usePage()
 const isHome = computed(() => page.url === '/')
 const isAdmin = computed(() => page.url.startsWith('/admin'))
-const isMoreActive = computed(() => page.url.startsWith('/admin/galeria') || page.url.startsWith('/admin/videos'))
+const isSuperAdmin = computed(() => page.props.auth?.role === 'superadmin')
+const isMoreActive = computed(() => page.url.startsWith('/admin/galeria') || page.url.startsWith('/admin/videos') || page.url.startsWith('/admin/comisiones'))
 
 const scrolled = ref(false)
 
@@ -396,6 +397,19 @@ onBeforeUnmount(() => {
                   <polygon points="5 3 19 12 5 21 5 3" />
                 </svg>
                 Videos
+              </Link>
+              <Link
+                v-if="isSuperAdmin"
+                href="/admin/comisiones"
+                class="flex items-center gap-3 px-4 py-3 text-sm font-medium transition-colors border-t border-primary/5"
+                :class="$page.url.startsWith('/admin/comisiones') ? 'bg-primary/10 text-secondary' : 'text-secondary/70 hover:bg-cream'"
+                @click="showAdminMore = false"
+              >
+                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="9" />
+                  <path d="M12 7v10M9.5 9.5c0-1 1.1-1.8 2.5-1.8s2.5.8 2.5 1.8-1.1 1.6-2.5 1.9-2.5.9-2.5 1.9 1.1 1.8 2.5 1.8 2.5-.8 2.5-1.8" />
+                </svg>
+                Mis Comisiones
               </Link>
               <Link
                 :href="route('logout')"

@@ -33,6 +33,7 @@ class HandleInertiaRequests extends Middleware
             ...parent::share($request),
             'auth' => [
                 'user' => $request->user(),
+                'role' => $request->user()?->role,
             ],
             'appName' => config('app.name'),
             'whatsapp_number' => config('services.whatsapp'),
